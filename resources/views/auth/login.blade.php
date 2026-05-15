@@ -73,10 +73,18 @@
             </div>
 
             <!-- SEARCH -->
-            <img
-                src="{{ asset('images/ocp-logo.png') }}"
-                class="w-20"
-            />
+            <svg xmlns="http://www.w3.org/2000/svg"
+                 class="w-7 h-7 text-[#18A558]"
+                 fill="none"
+                 viewBox="0 0 24 24"
+                 stroke="currentColor">
+
+                <path stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M21 21l-4.35-4.35m1.85-5.15a7 7 0 11-14 0 7 7 0 0114 0z"/>
+
+            </svg>
 
         </div>
 
@@ -86,11 +94,11 @@
     <div class="flex flex-1">
 
         <!-- IMAGE SIDE -->
-        <div class="w-[70%] relative">
+        <div class="w-[68%] relative">
 
             <img
-                    src="{{ asset('images/login-bg.png') }}"
-                    class="w-full h-full object-cover"
+                src="{{ asset('images/login-bg.png') }}"
+                class="w-full h-full object-cover"
             >
 
             <!-- OVERLAY -->
@@ -119,7 +127,7 @@
         </div>
 
         <!-- LOGIN SIDE -->
-        <div class="w-[30%] bg-[#040B1B] flex items-center justify-center px-14">
+        <div class="w-[32%] bg-[#040B1B] flex items-center justify-center px-14">
 
             <div class="w-full max-w-md">
 
@@ -132,7 +140,7 @@
                 </p>
 
                 <!-- FORM -->
-                <form class="space-y-8">
+                <form action="/dashboard" method="GET" class="space-y-8">
 
                     <!-- EMAIL -->
                     <div>
@@ -199,17 +207,13 @@
                     </div>
 
                     <!-- BUTTON -->
-                    <form action="/dashboard" method="GET">
+                    <button
+                        type="submit"
+                        class="w-full h-16 rounded-2xl bg-[#00C853] hover:bg-[#00b84c] transition text-white text-2xl font-semibold shadow-lg shadow-green-500/30">
 
-                        <button
-                            type="submit"
-                            class="w-full h-16 rounded-2xl bg-[#00C853] hover:bg-[#00b84c] transition text-white text-2xl font-semibold">
+                        Se connecter
 
-                            Se connecter
-
-                        </button>
-
-                    </form>
+                    </button>
 
                     <!-- REGISTER -->
                     <div class="text-center pt-4">
