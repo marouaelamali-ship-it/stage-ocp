@@ -140,8 +140,12 @@
                 </p>
 
                 <!-- FORM -->
-                <form action="/dashboard" method="GET" class="space-y-8">
+               <form action="/login"
+                    method="POST"
+                    class="space-y-8">
 
+                    @csrf
+                    
                     <!-- EMAIL -->
                     <div>
 
@@ -166,6 +170,7 @@
 
                             <input
                                 type="email"
+                                name="email"
                                 placeholder="prenom.nom@ocpgroup.ma"
                                 class="bg-transparent outline-none text-white w-full"
                             >
@@ -198,6 +203,7 @@
 
                             <input
                                 type="password"
+                                name="password"
                                 placeholder="••••••••"
                                 class="bg-transparent outline-none text-white w-full"
                             >

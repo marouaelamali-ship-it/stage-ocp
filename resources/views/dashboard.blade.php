@@ -12,8 +12,8 @@
 
 <body class="font-[Poppins] bg-[#F4F7FA]">
 
-<div class="flex h-screen overflow-hidden">
-
+<div class="flex flex-col lg:flex-row h-screen overflow-hidden">
+    
     <!-- SIDEBAR -->
     <aside class="w-[280px] bg-[#071120] text-white flex flex-col">
 
@@ -49,7 +49,7 @@
         <!-- FOOTER -->
         <div class="p-6 border-t border-white/10">
 
-            <a href="/login"
+            <a href="/logout"
                class="w-full h-14 rounded-2xl bg-red-500 hover:bg-red-600 transition font-semibold flex items-center justify-center">
 
                 Déconnexion
@@ -66,23 +66,36 @@
         <!-- TOPBAR -->
         <div class="h-24 bg-white px-10 flex items-center justify-between border-b border-gray-200">
 
-            <div>
-                <h1 class="text-3xl font-bold text-[#071120]">
-                    Dashboard
-                </h1>
+    <div>
+        <h1 class="text-3xl font-bold text-[#071120]">
+            Dashboard
+        </h1>
 
-                <p class="text-gray-500 mt-1">
-                    Bienvenue dans votre espace administrateur
-                </p>
-            </div>
+        <p class="text-gray-500 mt-1">
+            Bienvenue dans votre espace administrateur
+        </p>
+    </div>
 
-        </div>
+    <form action="/dashboard"
+          method="GET"
+          class="w-[320px] h-14 bg-[#F4F7FA] rounded-2xl px-5 flex items-center">
+
+        <input
+            name="search"
+            type="text"
+            placeholder="Rechercher..."
+            class="bg-transparent outline-none w-full"
+        >
+
+    </form>
+
+</div>
 
         <!-- CONTENT -->
         <div class="p-10">
 
             <!-- STATS -->
-            <div class="grid grid-cols-4 gap-8 mb-10">
+                <div class="grid md:grid-cols-2 xl:grid-cols-4 gap-8 mb-10">
 
                 <div class="bg-white rounded-3xl p-7 shadow-sm">
 
@@ -158,96 +171,99 @@
 
                 </div>
 
+                <div class="bg-white p-8 rounded-3xl shadow-sm mb-10">
+
+    <h2 class="text-2xl font-bold mb-6">
+        Statistiques
+    </h2>
+
+    <div class="grid grid-cols-3 gap-6">
+
+        <div class="bg-green-100 h-40 rounded-3xl flex flex-col items-center justify-center">
+            <h1 class="text-5xl font-bold text-green-600">
+                {{ $termines }}
+            </h1>
+
+            <p class="mt-3 font-semibold text-green-700">
+                Terminées
+            </p>
+        </div>
+
+        <div class="bg-yellow-100 h-40 rounded-3xl flex flex-col items-center justify-center">
+            <h1 class="text-5xl font-bold text-yellow-600">
+                {{ $encours }}
+            </h1>
+
+            <p class="mt-3 font-semibold text-yellow-700">
+                En cours
+            </p>
+        </div>
+
+        <div class="bg-red-100 h-40 rounded-3xl flex flex-col items-center justify-center">
+            <h1 class="text-5xl font-bold text-red-600">
+                {{ $critiques }}
+            </h1>
+
+            <p class="mt-3 font-semibold text-red-700">
+                Critiques
+            </p>
+        </div>
+
+    </div>
+
+</div>
+
                 <table class="w-full text-left">
 
                     <thead>
 
-                        <tr class="border-b border-gray-200 text-gray-500">
+                        <tbody class="text-[#071120]">
 
-                            <th class="py-4">ID</th>
-                            <th>Équipement</th>
-                            <th>Technicien</th>
-                            <th>Status</th>
-                            <th>Date</th>
-                            <th>Actions</th>
+                @foreach($maintenances as $maintenance)
 
-                        </tr>
+                <tr class="border-b border-gray-100">
 
+                    <td class="py-6 font-semibold">
+                        #{{ $maintenance->id }}
+                    </td>
+
+                    <td>
+                        Equipment {{ $maintenance->equipment_id }}
+                    </td>
+
+                    <td>
+                        ---
+                    </td>
+
+                    <td>
+
+                        <span class="bg-yellow-100 text-yellow-600 px-4 py-2 rounded-xl text-sm font-semibold">
+
+                            {{ $maintenance->status }}
+
+                        </span>
+
+                    </td>
+
+                    <td>
+                        {{ $maintenance->created_at }}
+                    </td>
+
+                </tr>
+
+                @endforeach
+
+                </tbody>
+                
                     </thead>
 
-                    <tbody>
-
-                    @foreach($maintenances as $m)
-
-                        <tr class="border-b border-gray-100">
-
-                            <td class="py-6 font-semibold">
-                                #{{ $m->id }}
-                            </td>
-
-                            <td>
-                                {{ $m->equipment }}
-                            </td>
-
-                            <td>
-                                {{ $m->technicien }}
-                            </td>
-
-                            <td>
-
-                                <span class="px-4 py-2 rounded-xl text-sm font-semibold
-
-                                {{ $m->status == 'Terminée' ? 'bg-green-100 text-green-600' : '' }}
-                                {{ $m->status == 'En cours' ? 'bg-yellow-100 text-yellow-600' : '' }}
-                                {{ $m->status == 'Critique' ? 'bg-red-100 text-red-600' : '' }}
-
-                                ">
-
-                                    {{ $m->status }}
-
-                                </span>
-
-                            </td>
-
-                            <td>
-                                {{ $m->date }}
-                            </td>
-
-                            <td class="flex items-center gap-3 py-4">
-
-                                <!-- EDIT -->
-                                <a href="/maintenances/{{ $m->id }}/edit"
-                                   class="bg-blue-500 hover:bg-blue-600 transition text-white px-4 py-2 rounded-xl">
-
-                                    Modifier
-
-                                </a>
-
-                                <!-- DELETE -->
-                                <form action="/maintenances/{{ $m->id }}" method="POST">
-
-                                    @csrf
-                                    @method('DELETE')
-
-                                    <button
-                                        type="submit"
-                                        class="bg-red-500 hover:bg-red-600 transition text-white px-4 py-2 rounded-xl">
-
-                                        Supprimer
-
-                                    </button>
-
-                                </form>
-
-                            </td>
-
-                        </tr>
-
-                    @endforeach
-
-                    </tbody>
+                    
 
                 </table>
+
+                <div class="mt-8">
+                    {{ $maintenances->links() }}
+                </div>
 
             </div>
 

@@ -11,23 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('equipments', function (Blueprint $table) {
+            Schema::create('equipments', function (Blueprint $table) {
             $table->id();
-
             $table->string('name');
-            $table->string('reference');
 
-            $table->foreignId('category_id')
-                ->constrained()
-                ->onDelete('cascade');
+            $table->string('reference')->nullable();
+            $table->foreignId('category_id')->nullable()->constrained()->nullOnDelete();
 
-            $table->string('location');
-
-            $table->enum('status', [
-                'active',
-                'en panne',
-                'en maintenance'
-            ]);
+            $table->string('location')->nullable();
 
             $table->timestamps();
         });

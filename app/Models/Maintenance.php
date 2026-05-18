@@ -7,10 +7,12 @@ use Illuminate\Database\Eloquent\Model;
 class Maintenance extends Model
 {
     protected $fillable = [
+
         'equipment_id',
         'type',
         'description',
-        'status'
+        'status',
+
     ];
 
     public function equipment()

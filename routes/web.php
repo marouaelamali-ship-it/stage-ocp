@@ -1,25 +1,80 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Models\Maintenance;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+
+use App\Models\Maintenance;
+
+/*
+|--------------------------------------------------------------------------
+| HOME
+|--------------------------------------------------------------------------
+*/
 
 Route::get('/', function () {
+
     return redirect('/login');
+
 });
 
 /*
 |--------------------------------------------------------------------------
-| LOGIN
+| LOGIN PAGE
 |--------------------------------------------------------------------------
 */
 
 Route::get('/login', function () {
+
     return view('auth.login');
+
+})->name('login');
+
+/*
+|--------------------------------------------------------------------------
+| LOGIN ACTION
+|--------------------------------------------------------------------------
+*/
+
+Route::post('/login', function (Request $request) {
+
+    $credentials = $request->validate([
+
+        'email' => ['required', 'email'],
+        'password' => ['required'],
+
+    ]);
+
+    if (Auth::attempt($credentials)) {
+
+        $request->session()->regenerate();
+
+        return redirect('/dashboard');
+
+    }
+
+    return back()->withErrors([
+        'email' => 'Email ou mot de passe incorrect',
+    ]);
+
 });
 
-Route::post('/login', function () {
-    return redirect('/dashboard');
+/*
+|--------------------------------------------------------------------------
+| LOGOUT
+|--------------------------------------------------------------------------
+*/
+
+Route::post('/logout', function (Request $request) {
+
+    Auth::logout();
+
+    $request->session()->invalidate();
+
+    $request->session()->regenerateToken();
+
+    return redirect('/login');
+
 });
 
 /*
@@ -30,9 +85,23 @@ Route::post('/login', function () {
 
 Route::get('/dashboard', function () {
 
-    $maintenances = Maintenance::latest()->get();
+    $maintenances = Maintenance::latest()->paginate(5);
 
-    return view('dashboard', compact('maintenances'));
+    $totalMaintenances = Maintenance::count();
+
+    $termines = Maintenance::where('status', 'termine')->count();
+
+    $encours = Maintenance::where('status', 'en cours')->count();
+
+    $critiques = Maintenance::where('status', 'en attente')->count();
+
+    return view('dashboard', compact(
+        'maintenances',
+        'totalMaintenances',
+        'termines',
+        'encours',
+        'critiques'
+    ));
 
 });
 
@@ -58,9 +127,12 @@ Route::post('/maintenances', function (Request $request) {
 
     Maintenance::create([
 
-        'equipment' => $request->equipment,
-        'technicien' => $request->technician,
-        'date' => $request->date,
+        'equipment_id' => 1,
+
+        'type' => 'corrective',
+
+        'description' => $request->equipment,
+
         'status' => $request->status,
 
     ]);
@@ -71,7 +143,7 @@ Route::post('/maintenances', function (Request $request) {
 
 /*
 |--------------------------------------------------------------------------
-| SUPPRIMER
+| DELETE MAINTENANCE
 |--------------------------------------------------------------------------
 */
 
@@ -85,7 +157,7 @@ Route::delete('/maintenances/{id}', function ($id) {
 
 /*
 |--------------------------------------------------------------------------
-| EDIT PAGE
+| PAGE EDIT
 |--------------------------------------------------------------------------
 */
 
@@ -99,7 +171,7 @@ Route::get('/maintenances/{id}/edit', function ($id) {
 
 /*
 |--------------------------------------------------------------------------
-| UPDATE
+| UPDATE MAINTENANCE
 |--------------------------------------------------------------------------
 */
 
@@ -109,7 +181,6 @@ Route::put('/maintenances/{id}', function (Request $request, $id) {
 
     $maintenance->update([
 
-        'equipment' => $request->equipment,
         'technicien' => $request->technician,
         'date' => $request->date,
         'status' => $request->status,

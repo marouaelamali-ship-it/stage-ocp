@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ajouter Maintenance</title>
+    <title>Modifier Maintenance</title>
 
     @vite('resources/css/app.css')
 
@@ -20,17 +20,17 @@
         <div>
 
             <h1 class="text-5xl font-bold text-[#071120]">
-                Nouvelle Maintenance
+                Modifier Maintenance
             </h1>
 
             <p class="text-gray-500 mt-3 text-lg">
-                Ajouter une nouvelle intervention
+                Modifier les informations
             </p>
 
         </div>
 
         <a href="/dashboard"
-            class="h-14 px-8 rounded-2xl bg-[#071120] text-white flex items-center justify-center font-semibold">
+           class="h-14 px-8 rounded-2xl bg-[#071120] text-white flex items-center justify-center font-semibold">
 
             Retour
 
@@ -41,9 +41,10 @@
     <!-- FORM -->
     <div class="bg-white rounded-3xl shadow-sm p-10 max-w-4xl">
 
-        <form action="/maintenances" method="POST" class="space-y-8">
+        <form action="/maintenances/{{ $maintenance->id }}" method="POST" class="space-y-8">
 
             @csrf
+            @method('PUT')
 
             <!-- EQUIPEMENT -->
             <div>
@@ -55,9 +56,8 @@
                 <input
                     name="equipment"
                     type="text"
-                    placeholder="Machine industrielle..."
+                    value="{{ $maintenance->equipment }}"
                     class="w-full h-16 rounded-2xl border border-gray-200 px-6 outline-none focus:border-[#00C853]"
-                    required
                 >
 
             </div>
@@ -72,9 +72,8 @@
                 <input
                     name="technician"
                     type="text"
-                    placeholder="Nom technicien..."
+                    value="{{ $maintenance->technicien }}"
                     class="w-full h-16 rounded-2xl border border-gray-200 px-6 outline-none focus:border-[#00C853]"
-                    required
                 >
 
             </div>
@@ -89,8 +88,8 @@
                 <input
                     name="date"
                     type="date"
+                    value="{{ $maintenance->date }}"
                     class="w-full h-16 rounded-2xl border border-gray-200 px-6 outline-none focus:border-[#00C853]"
-                    required
                 >
 
             </div>
@@ -104,22 +103,30 @@
 
                 <select
                     name="status"
-                    class="w-full h-16 rounded-2xl border border-gray-200 px-6 outline-none focus:border-[#00C853]"
-                    required>
+                    class="w-full h-16 rounded-2xl border border-gray-200 px-6 outline-none focus:border-[#00C853]">
 
-                    <option value="en attente">En attente</option>
-                    <option value="en cours">En cours</option>
-                    <option value="termine">Terminée</option>
+                    <option {{ $maintenance->status == 'Terminée' ? 'selected' : '' }}>
+                        Terminée
+                    </option>
+
+                    <option {{ $maintenance->status == 'En cours' ? 'selected' : '' }}>
+                        En cours
+                    </option>
+
+                    <option {{ $maintenance->status == 'Critique' ? 'selected' : '' }}>
+                        Critique
+                    </option>
 
                 </select>
 
-</div>
+            </div>
+
             <!-- BUTTON -->
             <button
                 type="submit"
-                class="w-full h-16 rounded-2xl bg-[#00C853] hover:bg-[#00b84c] transition text-white text-xl font-bold">
+                class="w-full h-16 rounded-2xl bg-blue-500 hover:bg-blue-600 transition text-white text-xl font-bold">
 
-                Ajouter Maintenance
+                Modifier Maintenance
 
             </button>
 

@@ -8,17 +8,18 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('interventions', function (Blueprint $table) {
+        Schema::create('users', function (Blueprint $table) {
 
             $table->id();
 
-            $table->unsignedBigInteger('maintenance_id');
+            $table->string('name');
 
-            $table->dateTime('date_debut');
+            $table->string('email')->unique();
 
-            $table->dateTime('date_fin')->nullable();
+            $table->string('password');
 
-            $table->text('rapport');
+            $table->enum('role', ['admin', 'technicien'])
+                  ->default('technicien');
 
             $table->timestamps();
 
@@ -27,6 +28,6 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::dropIfExists('interventions');
+        Schema::dropIfExists('users');
     }
 };
