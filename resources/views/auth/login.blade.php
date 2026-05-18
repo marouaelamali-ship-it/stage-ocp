@@ -26,15 +26,15 @@
                 <div class="w-14 h-14 rounded-full border-2 border-[#18A558] flex items-center justify-center">
 
                     <svg xmlns="http://www.w3.org/2000/svg"
-                         class="w-8 h-8 text-[#18A558]"
-                         fill="none"
-                         viewBox="0 0 24 24"
-                         stroke="currentColor">
+                        class="w-8 h-8 text-[#18A558]"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor">
 
                         <path stroke-linecap="round"
-                              stroke-linejoin="round"
-                              stroke-width="2"
-                              d="M12 2l2.4 4.8L20 8l-4 3.9L17 18l-5-2.7L7 18l1-6.1L4 8l5.6-1.2L12 2z"/>
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M12 2l2.4 4.8L20 8l-4 3.9L17 18l-5-2.7L7 18l1-6.1L4 8l5.6-1.2L12 2z"/>
 
                     </svg>
 
@@ -74,15 +74,15 @@
 
             <!-- SEARCH -->
             <svg xmlns="http://www.w3.org/2000/svg"
-                 class="w-7 h-7 text-[#18A558]"
-                 fill="none"
-                 viewBox="0 0 24 24"
-                 stroke="currentColor">
+                class="w-7 h-7 text-[#18A558]"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor">
 
                 <path stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M21 21l-4.35-4.35m1.85-5.15a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M21 21l-4.35-4.35m1.85-5.15a7 7 0 11-14 0 7 7 0 0114 0z"/>
 
             </svg>
 
@@ -140,7 +140,18 @@
                 </p>
 
                 <!-- FORM -->
-               <form action="/login"
+                @if ($errors->any())
+
+                    <div class="bg-red-500/20 border border-red-500 text-red-300 p-4 rounded-2xl mb-6">
+
+                        {{ $errors->first() }}
+
+                    </div>
+
+                @endif
+
+    
+            <form action="/login"
                     method="POST"
                     class="space-y-8">
 
@@ -156,15 +167,15 @@
                         <div class="h-16 rounded-2xl bg-[#0E1628] border border-[#1D2940] px-5 flex items-center">
 
                             <svg xmlns="http://www.w3.org/2000/svg"
-                                 class="w-6 h-6 text-gray-500 mr-4"
-                                 fill="none"
-                                 viewBox="0 0 24 24"
-                                 stroke="currentColor">
+                                class="w-6 h-6 text-gray-500 mr-4"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor">
 
                                 <path stroke-linecap="round"
-                                      stroke-linejoin="round"
-                                      stroke-width="2"
-                                      d="M16 12H8m8 0H8m8 4H8m8-8H8m-2 12h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                    stroke-linejoin="round"
+                                    stroke-width="2"
+                                    d="M16 12H8m8 0H8m8 4H8m8-8H8m-2 12h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
 
                             </svg>
 
@@ -189,15 +200,15 @@
                         <div class="h-16 rounded-2xl bg-[#0E1628] border border-[#1D2940] px-5 flex items-center">
 
                             <svg xmlns="http://www.w3.org/2000/svg"
-                                 class="w-6 h-6 text-gray-500 mr-4"
-                                 fill="none"
-                                 viewBox="0 0 24 24"
-                                 stroke="currentColor">
+                                class="w-6 h-6 text-gray-500 mr-4"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor">
 
                                 <path stroke-linecap="round"
-                                      stroke-linejoin="round"
-                                      stroke-width="2"
-                                      d="M12 11c1.657 0 3-1.343 3-3S13.657 5 12 5 9 6.343 9 8s1.343 3 3 3zm0 0v2m-6 6h12a2 2 0 002-2v-3a6 6 0 10-12 0v3a2 2 0 002 2z"/>
+                                    stroke-linejoin="round"
+                                    stroke-width="2"
+                                    d="M12 11c1.657 0 3-1.343 3-3S13.657 5 12 5 9 6.343 9 8s1.343 3 3 3zm0 0v2m-6 6h12a2 2 0 002-2v-3a6 6 0 10-12 0v3a2 2 0 002 2z"/>
 
                             </svg>
 

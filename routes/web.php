@@ -6,6 +6,9 @@ use Illuminate\Support\Facades\Auth;
 
 use App\Models\Maintenance;
 
+use App\Http\Controllers\Api\EquipmentController;
+use App\Http\Controllers\Api\AuthController;
+
 /*
 |--------------------------------------------------------------------------
 | HOME
@@ -188,5 +191,14 @@ Route::put('/maintenances/{id}', function (Request $request, $id) {
     ]);
 
     return redirect('/dashboard');
+
+});
+
+Route::middleware('auth:sanctum')->group(function () {
+
+    Route::post('/logout', [AuthController::class, 'logout']);
+
+    Route::get('/equipments', [EquipmentController::class, 'index']);
+    Route::post('/equipments', [EquipmentController::class, 'store']);
 
 });
