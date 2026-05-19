@@ -9,6 +9,8 @@ use App\Models\Maintenance;
 use App\Http\Controllers\Api\EquipmentController;
 use App\Http\Controllers\Api\AuthController;
 
+use Barryvdh\DomPDF\Facade\Pdf;
+
 /*
 |--------------------------------------------------------------------------
 | HOME
@@ -105,6 +107,16 @@ Route::get('/dashboard', function () {
         'encours',
         'critiques'
     ));
+
+});
+
+Route::get('/export-pdf', function () {
+
+    $maintenances = Maintenance::all();
+
+    $pdf = Pdf::loadView('pdf.maintenances', compact('maintenances'));
+
+    return $pdf->download('maintenances.pdf');
 
 });
 
