@@ -1,224 +1,215 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Equipments</title>
+<meta charset="UTF-8">
+<title>Equipments Dashboard</title>
 
-    @vite('resources/css/app.css')
+@vite('resources/css/app.css')
 
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 
 <body class="bg-[#F4F7FA] font-[Poppins]">
 
-<div class="flex min-h-screen">
+<div class="p-10">
 
-    <!-- SIDEBAR -->
-    <aside class="w-[280px] bg-[#071120] text-white flex flex-col">
+    <h1 class="text-4xl font-bold text-[#071120] mb-10">
+        Equipments Dashboard
+    </h1>
 
-        <div class="h-24 flex items-center px-8 border-b border-white/10">
+    <!-- STATS -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10">
 
-            <div class="w-14 h-14 rounded-2xl bg-[#00C853] flex items-center justify-center text-2xl font-bold">
-                O
-            </div>
-
-            <div class="ml-4">
-
-                <h1 class="text-2xl font-bold">
-                    OCP Admin
-                </h1>
-
-                <p class="text-sm text-gray-400">
-                    Maintenance System
-                </p>
-
-            </div>
-
+        <div class="bg-white rounded-3xl p-6 shadow">
+            <p class="text-gray-500">Total</p>
+            <h1 class="text-4xl font-bold">
+                {{ $totalEquipments }}
+            </h1>
         </div>
 
-        <div class="flex-1 py-10 px-6 space-y-4">
-
-            <a href="/dashboard"
-               class="flex items-center gap-4 hover:bg-white/5 h-14 px-5 rounded-2xl transition">
-
-                📊 Dashboard
-
-            </a>
-
-            <a href="/equipments"
-               class="flex items-center gap-4 bg-[#00C853] h-14 px-5 rounded-2xl text-lg font-semibold">
-
-                🖥️ Equipments
-
-            </a>
-
+        <div class="bg-white rounded-3xl p-6 shadow">
+            <p class="text-gray-500">Disponibles</p>
+            <h1 class="text-4xl text-green-500 font-bold">
+                {{ $disponibles }}
+            </h1>
         </div>
 
-    </aside>
+        <div class="bg-white rounded-3xl p-6 shadow">
+            <p class="text-gray-500">Maintenance</p>
+            <h1 class="text-4xl text-yellow-500 font-bold">
+                {{ $maintenance }}
+            </h1>
+        </div>
 
-    <!-- CONTENT -->
-    <main class="flex-1 p-10">
+        <div class="bg-white rounded-3xl p-6 shadow">
+            <p class="text-gray-500">Critiques</p>
+            <h1 class="text-4xl text-red-500 font-bold">
+                {{ $critiques }}
+            </h1>
+        </div>
 
-        <!-- TOP -->
-        <div class="flex items-center justify-between mb-10">
+    </div>
 
-            <div>
+    <!-- CHART -->
+    <div class="bg-white rounded-3xl p-8 shadow mb-10">
 
-                <h1 class="text-4xl font-bold text-[#071120]">
-                    Equipments
-                </h1>
+        <h2 class="text-2xl font-bold mb-6">
+            Statistiques Equipments
+        </h2>
 
-                <p class="text-gray-500 mt-2">
-                    Gestion des équipements industriels
-                </p>
+        <canvas id="equipmentChart"></canvas>
 
-            </div>
+    </div>
+
+    <!-- AJOUT -->
+    <div class="bg-white rounded-3xl p-8 shadow mb-10">
+
+        <h2 class="text-2xl font-bold mb-6">
+            Ajouter Equipment
+        </h2>
+
+        <form action="/equipments" method="POST" class="grid gap-5">
+
+            @csrf
+
+            <input
+                type="text"
+                name="name"
+                placeholder="Nom equipment"
+                class="border p-4 rounded-2xl">
+
+            <input
+                type="text"
+                name="type"
+                placeholder="Type"
+                class="border p-4 rounded-2xl">
+
+            <select
+                name="status"
+                class="border p-4 rounded-2xl">
+
+                <option>Disponible</option>
+                <option>Maintenance</option>
+                <option>Critique</option>
+
+            </select>
 
             <button
-                class="bg-[#00C853] hover:bg-[#00b84c] transition text-white px-8 h-14 rounded-2xl font-semibold">
+                class="bg-[#00C853] text-white rounded-2xl p-4">
 
-                + Ajouter équipement
+                Ajouter
 
             </button>
 
-        </div>
+        </form>
 
-        <!-- CARDS -->
-        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
+    </div>
 
-            <!-- CARD -->
-            <div class="bg-white rounded-3xl p-7 shadow-sm hover:shadow-2xl hover:scale-105 transition duration-300">
+    <!-- TABLE -->
+    <div class="bg-white rounded-3xl p-8 shadow">
 
-                <div class="flex items-center justify-between mb-6">
+        <h2 class="text-2xl font-bold mb-6">
+            Liste Equipments
+        </h2>
 
-                    <div class="w-16 h-16 rounded-2xl bg-blue-100 flex items-center justify-center text-3xl">
+        <table class="w-full">
 
-                        ⚙️
+            <thead>
 
-                    </div>
+                <tr class="border-b">
 
-                    <span class="bg-green-100 text-green-600 px-4 py-2 rounded-xl text-sm font-semibold">
-                        Actif
-                    </span>
+                    <th>ID</th>
+                    <th>Nom</th>
+                    <th>Type</th>
+                    <th>Status</th>
+                    <th>Actions</th>
 
-                </div>
+                </tr>
 
-                <h2 class="text-2xl font-bold text-[#071120] mb-3">
-                    Machine OCP #1
-                </h2>
+            </thead>
 
-                <p class="text-gray-500 mb-6">
-                    Equipement industriel de production.
-                </p>
+            <tbody>
 
-                <div class="flex items-center justify-between">
+                @foreach($equipments as $equipment)
 
-                    <span class="text-sm text-gray-400">
-                        Dernière maintenance:
-                        12/05/2026
-                    </span>
+                <tr class="border-b text-center">
 
-                    <button class="bg-[#071120] text-white px-5 h-11 rounded-xl hover:bg-black transition">
+                    <td>{{ $equipment->id }}</td>
+                    <td>{{ $equipment->name }}</td>
+                    <td>{{ $equipment->type }}</td>
+                    <td>{{ $equipment->status }}</td>
 
-                        Voir
+                    <td class="py-4 flex gap-2 justify-center">
 
-                    </button>
+                        <a
+                            href="/equipments/{{ $equipment->id }}/edit"
+                            class="bg-blue-500 text-white px-4 py-2 rounded-xl">
 
-                </div>
+                            Modifier
 
-            </div>
+                        </a>
 
-            <!-- CARD -->
-            <div class="bg-white rounded-3xl p-7 shadow-sm hover:shadow-2xl hover:scale-105 transition duration-300">
+                        <form
+                            action="/equipments/{{ $equipment->id }}"
+                            method="POST">
 
-                <div class="flex items-center justify-between mb-6">
+                            @csrf
+                            @method('DELETE')
 
-                    <div class="w-16 h-16 rounded-2xl bg-yellow-100 flex items-center justify-center text-3xl">
+                            <button
+                                class="bg-red-500 text-white px-4 py-2 rounded-xl">
 
-                        🔧
+                                Supprimer
 
-                    </div>
+                            </button>
 
-                    <span class="bg-yellow-100 text-yellow-600 px-4 py-2 rounded-xl text-sm font-semibold">
-                        Maintenance
-                    </span>
+                        </form>
 
-                </div>
+                    </td>
 
-                <h2 class="text-2xl font-bold text-[#071120] mb-3">
-                    Turbine #4
-                </h2>
+                </tr>
 
-                <p class="text-gray-500 mb-6">
-                    Système de contrôle industriel.
-                </p>
+                @endforeach
 
-                <div class="flex items-center justify-between">
+            </tbody>
 
-                    <span class="text-sm text-gray-400">
-                        Dernière maintenance:
-                        18/05/2026
-                    </span>
+        </table>
 
-                    <button class="bg-[#071120] text-white px-5 h-11 rounded-xl hover:bg-black transition">
+        <div class="mt-6">
 
-                        Voir
-
-                    </button>
-
-                </div>
-
-            </div>
-
-            <!-- CARD -->
-            <div class="bg-white rounded-3xl p-7 shadow-sm hover:shadow-2xl hover:scale-105 transition duration-300">
-
-                <div class="flex items-center justify-between mb-6">
-
-                    <div class="w-16 h-16 rounded-2xl bg-red-100 flex items-center justify-center text-3xl">
-
-                        🚨
-
-                    </div>
-
-                    <span class="bg-red-100 text-red-600 px-4 py-2 rounded-xl text-sm font-semibold">
-                        Critique
-                    </span>
-
-                </div>
-
-                <h2 class="text-2xl font-bold text-[#071120] mb-3">
-                    Générateur #2
-                </h2>
-
-                <p class="text-gray-500 mb-6">
-                    Générateur électrique principal.
-                </p>
-
-                <div class="flex items-center justify-between">
-
-                    <span class="text-sm text-gray-400">
-                        Dernière maintenance:
-                        20/05/2026
-                    </span>
-
-                    <button class="bg-[#071120] text-white px-5 h-11 rounded-xl hover:bg-black transition">
-
-                        Voir
-
-                    </button>
-
-                </div>
-
-            </div>
+            {{ $equipments->links() }}
 
         </div>
 
-    </main>
+    </div>
 
 </div>
+
+<script>
+
+new Chart(document.getElementById('equipmentChart'), {
+
+    type: 'bar',
+
+    data: {
+
+        labels: ['Disponible','Maintenance','Critique'],
+
+        datasets: [{
+
+            data: [
+                {{ $disponibles }},
+                {{ $maintenance }},
+                {{ $critiques }}
+            ]
+
+        }]
+
+    }
+
+});
+
+</script>
 
 </body>
 </html>

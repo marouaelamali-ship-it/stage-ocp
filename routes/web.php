@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\Maintenance;
 use App\Http\Controllers\MaitenanceController;
 
-use App\Http\Controllers\Api\Equipment;
+use App\Models\Equipment;
 use App\Http\Controllers\Api\EquipmentController;
 
 use App\Http\Controllers\Api\AuthController;
@@ -276,6 +276,83 @@ Route::delete('/equipments/{id}', function ($id) {
 Route::get('/equipments', function () {
 
     return view('equipments');
+
+});
+
+/*
+|--------------------------------------------------------------------------
+| EQUIPMENTS
+|--------------------------------------------------------------------------
+*/
+
+Route::get('/equipments', function () {
+
+    $equipments = Equipment::latest()->paginate(5);
+
+    $totalEquipments = Equipment::count();
+
+    $disponibles = Equipment::where('status', 'Disponible')->count();
+
+    $maintenance = Equipment::where('status', 'Maintenance')->count();
+
+    $critiques = Equipment::where('status', 'Critique')->count();
+
+    return view('equipments', compact(
+        'equipments',
+        'totalEquipments',
+        'disponibles',
+        'maintenance',
+        'critiques'
+    ));
+
+});
+
+Route::post('/equipments', function (Request $request) {
+
+    Equipment::create([
+
+        'name' => $request->name,
+        'type' => $request->type,
+        'status' => $request->status,
+
+    ]);
+
+    return redirect('/equipments')
+        ->with('success', 'Équipement ajouté');
+
+});
+
+Route::delete('/equipments/{id}', function ($id) {
+
+    Equipment::findOrFail($id)->delete();
+
+    return redirect('/equipments')
+        ->with('delete', 'Équipement supprimé');
+
+});
+
+Route::get('/equipments/{id}/edit', function ($id) {
+
+    $equipment = Equipment::findOrFail($id);
+
+    return view('edit-equipment', compact('equipment'));
+
+});
+
+Route::put('/equipments/{id}', function (Request $request, $id) {
+
+    $equipment = Equipment::findOrFail($id);
+
+    $equipment->update([
+
+        'name' => $request->name,
+        'type' => $request->type,
+        'status' => $request->status,
+
+    ]);
+
+    return redirect('/equipments')
+        ->with('update', 'Équipement modifié');
 
 });
 
