@@ -125,6 +125,13 @@ Swal.fire({
 
             </a>
 
+            <a href="/equipments"
+                class="flex items-center gap-4 hover:bg-white/5 h-14 px-5 rounded-2xl transition">
+
+                    🖥️ Equipements
+
+            </a>
+
         </div>
 
         <!-- FOOTER -->

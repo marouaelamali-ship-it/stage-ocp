@@ -5,8 +5,11 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 use App\Models\Maintenance;
+use App\Http\Controllers\MaitenanceController;
 
+use App\Http\Controllers\Api\Equipment;
 use App\Http\Controllers\Api\EquipmentController;
+
 use App\Http\Controllers\Api\AuthController;
 
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -113,7 +116,7 @@ Route::post('/signout', function (Request $request) {
 
     });
 
-});
+
 
     /*
     |--------------------------------------------------------------------------
@@ -219,5 +222,61 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::get('/equipments', [EquipmentController::class, 'index']);
     Route::post('/equipments', [EquipmentController::class, 'store']);
+
+});
+
+/*
+|--------------------------------------------------------------------------
+| EQUIPMENTS PAGE
+|--------------------------------------------------------------------------
+*/
+
+Route::get('/equipments', function () {
+
+    $equipments = Equipment::latest()->get();
+
+    return view('equipments', compact('equipments'));
+
+});
+
+/*
+|--------------------------------------------------------------------------
+| ADD EQUIPMENT
+|--------------------------------------------------------------------------
+*/
+
+Route::post('/equipments', function (Request $request) {
+
+    Equipment::create([
+
+        'name' => $request->name,
+        'serial_number' => $request->serial_number,
+        'status' => $request->status,
+
+    ]);
+
+    return back()->with('success', 'Équipement ajouté');
+
+});
+
+/*
+|--------------------------------------------------------------------------
+| DELETE EQUIPMENT
+|--------------------------------------------------------------------------
+*/
+
+Route::delete('/equipments/{id}', function ($id) {
+
+    Equipment::findOrFail($id)->delete();
+
+    return back()->with('delete', 'Équipement supprimé');
+
+});
+
+Route::get('/equipments', function () {
+
+    return view('equipments');
+
+});
 
 });
