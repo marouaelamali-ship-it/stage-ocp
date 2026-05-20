@@ -8,10 +8,74 @@
     @vite('resources/css/app.css')
 
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 </head>
 
 <body id="body"
 class="font-[Poppins] bg-[#F4F7FA] transition duration-300">
+
+<!-- LOADER -->
+<div id="loader"
+     class="fixed inset-0 bg-white z-[9999] flex items-center justify-center">
+
+    <div class="w-20 h-20 border-[6px] border-[#00C853] border-t-transparent rounded-full animate-spin"></div>
+
+</div>
+
+<!-- TOAST -->
+@if(session('success'))
+
+<script>
+
+Swal.fire({
+
+    icon: 'success',
+    title: 'Succès',
+    text: '{{ session('success') }}',
+    confirmButtonColor: '#00C853'
+
+})
+
+</script>
+
+@endif
+
+@if(session('delete'))
+
+<script>
+
+Swal.fire({
+
+    icon: 'error',
+    title: 'Supprimé',
+    text: '{{ session('delete') }}',
+    confirmButtonColor: '#FF5252'
+
+})
+
+</script>
+
+@endif
+
+@if(session('update'))
+
+<script>
+
+Swal.fire({
+
+    icon: 'info',
+    title: 'Modification',
+    text: '{{ session('update') }}',
+    confirmButtonColor: '#2196F3'
+
+})
+
+</script>
+
+@endif
 
 <div class="flex h-screen overflow-hidden relative">
 
@@ -21,7 +85,7 @@ class="font-[Poppins] bg-[#F4F7FA] transition duration-300">
         w-[280px] h-screen
         bg-[#071120] text-white flex flex-col
         transform -translate-x-full lg:translate-x-0
-        transition duration-300">
+        transition-all duration-500 ease-in-out">
 
         <!-- LOGO -->
         <div class="h-24 flex items-center px-8 border-b border-white/10">
@@ -31,11 +95,15 @@ class="font-[Poppins] bg-[#F4F7FA] transition duration-300">
             </div>
 
             <div class="ml-4">
-                <h1 class="text-2xl font-bold">OCP Admin</h1>
+
+                <h1 class="text-2xl font-bold">
+                    OCP Admin
+                </h1>
 
                 <p class="text-sm text-gray-400">
                     Maintenance System
                 </p>
+
             </div>
 
         </div>
@@ -62,13 +130,12 @@ class="font-[Poppins] bg-[#F4F7FA] transition duration-300">
         <!-- FOOTER -->
         <div class="p-6 border-t border-white/10">
 
-            <form action="/logout" method="POST">
-
+                <form action="/signout" method="POST">
                 @csrf
 
                 <button
                     type="submit"
-                    class="w-full h-14 rounded-2xl bg-red-500 hover:bg-red-600 transition font-semibold">
+                    class="hover:scale-105 active:scale-95 duration-200 w-full h-14 rounded-2xl bg-red-500 hover:bg-red-600 transition font-semibold">
 
                     Déconnexion
 
@@ -91,7 +158,7 @@ class="font-[Poppins] bg-[#F4F7FA] transition duration-300">
                 <!-- MOBILE BUTTON -->
                 <button
                     onclick="toggleSidebar()"
-                    class="lg:hidden mr-5 bg-[#071120] text-white w-12 h-12 rounded-xl">
+                    class="hover:scale-105 active:scale-95 duration-200 lg:hidden mr-5 bg-[#071120] text-white w-12 h-12 rounded-xl">
 
                     ☰
 
@@ -104,35 +171,51 @@ class="font-[Poppins] bg-[#F4F7FA] transition duration-300">
                     </h1>
 
                     <p class="text-gray-500 mt-1">
-                        Bienvenue dans votre espace administrateur
+                        {{ auth()->check() ? auth()->user()->role : 'Admin' }}
                     </p>
 
                 </div>
 
             </div>
 
-            <!-- DARK MODE -->
-            <button
-                onclick="toggleDarkMode()"
-                class="mr-4 bg-[#071120] text-white px-5 h-12 rounded-2xl font-semibold">
+            <!-- RIGHT -->
+            <div class="flex items-center gap-4">
 
-                🌙 Mode
+                <!-- DARK MODE -->
+                <button
+                    onclick="toggleDarkMode()"
+                    class="hover:scale-105 active:scale-95 duration-200 bg-[#071120] text-white px-5 h-12 rounded-2xl font-semibold">
 
-            </button>
+                    🌙 Mode
 
-            <!-- SEARCH -->
-            <form action="/dashboard"
-                  method="GET"
-                  class="hidden md:flex w-[320px] h-14 bg-[#F4F7FA] rounded-2xl px-5 items-center">
+                </button>
 
-                <input
-                    name="search"
-                    type="text"
-                    placeholder="Rechercher..."
-                    class="bg-transparent outline-none w-full"
-                >
+                <!-- NOTIFICATION -->
+                <div class="relative">
 
-            </form>
+                    <button class="w-14 h-14 rounded-2xl bg-[#F4F7FA] flex items-center justify-center text-2xl">
+
+                        🔔
+
+                    </button>
+
+                    <div class="absolute top-2 right-2 w-3 h-3 bg-red-500 rounded-full animate-ping"></div>
+
+                </div>
+
+                <!-- SEARCH -->
+                <div class="w-[320px] h-14 bg-[#F4F7FA] rounded-2xl px-5 flex items-center">
+
+                    <input
+                        id="searchInput"
+                        type="text"
+                        placeholder="Rechercher..."
+                        class="bg-transparent outline-none w-full"
+                    >
+
+                </div>
+
+            </div>
 
         </div>
 
@@ -142,7 +225,7 @@ class="font-[Poppins] bg-[#F4F7FA] transition duration-300">
             <!-- STATS -->
             <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-8 mb-10">
 
-                <div class="bg-white rounded-3xl p-7 shadow-sm">
+                <div class="bg-white rounded-3xl p-7 shadow-sm hover:scale-105 hover:shadow-2xl transition duration-300">
 
                     <p class="text-gray-500 mb-3">
                         Total Maintenances
@@ -154,7 +237,7 @@ class="font-[Poppins] bg-[#F4F7FA] transition duration-300">
 
                 </div>
 
-                <div class="bg-white rounded-3xl p-7 shadow-sm">
+                <div class="bg-white rounded-3xl p-7 shadow-sm hover:scale-105 hover:shadow-2xl transition duration-300">
 
                     <p class="text-gray-500 mb-3">
                         Terminées
@@ -166,7 +249,7 @@ class="font-[Poppins] bg-[#F4F7FA] transition duration-300">
 
                 </div>
 
-                <div class="bg-white rounded-3xl p-7 shadow-sm">
+                <div class="bg-white rounded-3xl p-7 shadow-sm hover:scale-105 hover:shadow-2xl transition duration-300">
 
                     <p class="text-gray-500 mb-3">
                         En cours
@@ -178,7 +261,7 @@ class="font-[Poppins] bg-[#F4F7FA] transition duration-300">
 
                 </div>
 
-                <div class="bg-white rounded-3xl p-7 shadow-sm">
+                <div class="bg-white rounded-3xl p-7 shadow-sm hover:scale-105 hover:shadow-2xl transition duration-300">
 
                     <p class="text-gray-500 mb-3">
                         Critiques
@@ -196,7 +279,7 @@ class="font-[Poppins] bg-[#F4F7FA] transition duration-300">
             <div class="grid grid-cols-1 xl:grid-cols-2 gap-8 mb-10">
 
                 <!-- CHART -->
-                <div class="bg-white rounded-3xl p-8 shadow-sm">
+                <div class="bg-white rounded-3xl p-7 shadow-sm hover:scale-105 hover:shadow-2xl transition duration-300">
 
                     <h2 class="text-2xl font-bold text-[#071120] mb-6">
                         Statistiques Maintenances
@@ -268,19 +351,27 @@ class="font-[Poppins] bg-[#F4F7FA] transition duration-300">
 
                     </div>
 
-                    <a href="/maintenances"
-                       class="h-14 px-8 rounded-2xl bg-[#00C853] hover:bg-[#00b84c] transition text-white font-semibold flex items-center justify-center">
+                    <div class="flex gap-4">
 
-                        + Ajouter
+                        @if(auth()->check() && auth()->user()->role == 'admin')
+
+                        <a href="/maintenances"
+                        class="h-14 px-8 rounded-2xl bg-[#00C853] hover:bg-[#00b84c] transition text-white font-semibold flex items-center justify-center">
+
+                            + Ajouter
+
+                        </a>
+
+                        @endif
 
                         <a href="/export-pdf"
-                            class="h-14 px-8 rounded-2xl bg-[#071120] hover:bg-black transition text-white font-semibold flex items-center justify-center">
+                        class="h-14 px-8 rounded-2xl bg-[#071120] hover:bg-black transition text-white font-semibold flex items-center justify-center">
 
                             📄 Export PDF
 
                         </a>
 
-                    </a>
+                    </div>
 
                 </div>
 
@@ -300,7 +391,7 @@ class="font-[Poppins] bg-[#F4F7FA] transition duration-300">
 
                     </thead>
 
-                    <tbody>
+                    <tbody id="maintenanceTable" class="text-[#071120]">
 
                         @foreach($maintenances as $maintenance)
 
@@ -337,7 +428,7 @@ class="font-[Poppins] bg-[#F4F7FA] transition duration-300">
                             <td class="flex items-center gap-3 py-4">
 
                                 <a href="/maintenances/{{ $maintenance->id }}/edit"
-                                   class="bg-blue-500 hover:bg-blue-600 transition text-white px-4 py-2 rounded-xl">
+                                   class="hover:scale-105 active:scale-95 duration-200 bg-blue-500 hover:bg-blue-600 transition text-white px-4 py-2 rounded-xl">
 
                                     Modifier
 
@@ -350,7 +441,7 @@ class="font-[Poppins] bg-[#F4F7FA] transition duration-300">
 
                                     <button
                                         type="submit"
-                                        class="bg-red-500 hover:bg-red-600 transition text-white px-4 py-2 rounded-xl">
+                                        class="hover:scale-105 active:scale-95 duration-200 bg-red-500 hover:bg-red-600 transition text-white px-4 py-2 rounded-xl">
 
                                         Supprimer
 
@@ -381,8 +472,6 @@ class="font-[Poppins] bg-[#F4F7FA] transition duration-300">
     </main>
 
 </div>
-
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <script>
 
@@ -450,7 +539,6 @@ function toggleSidebar() {
 
 }
 
-
 function toggleDarkMode() {
 
     const body = document.getElementById('body');
@@ -459,6 +547,38 @@ function toggleDarkMode() {
     body.classList.toggle('bg-[#F4F7FA]');
 
 }
+
+const searchInput = document.getElementById('searchInput');
+
+searchInput.addEventListener('keyup', function() {
+
+    let value = this.value.toLowerCase();
+
+    let rows = document.querySelectorAll('#maintenanceTable tr');
+
+    rows.forEach(row => {
+
+        let rowText = row.innerText.toLowerCase();
+
+        if(rowText.includes(value)) {
+
+            row.style.display = '';
+
+        } else {
+
+            row.style.display = 'none';
+
+        }
+
+    });
+
+});
+
+window.addEventListener('load', () => {
+
+    document.getElementById('loader').style.display = 'none';
+
+});
 
 </script>
 

@@ -70,7 +70,7 @@ Route::post('/login', function (Request $request) {
 |--------------------------------------------------------------------------
 */
 
-Route::post('/logout', function (Request $request) {
+Route::post('/signout', function (Request $request) {
 
     Auth::logout();
 
@@ -80,131 +80,138 @@ Route::post('/logout', function (Request $request) {
 
     return redirect('/login');
 
-});
+})->middleware('auth');
 
-/*
-|--------------------------------------------------------------------------
-| DASHBOARD
-|--------------------------------------------------------------------------
-*/
 
-Route::get('/dashboard', function () {
+    /*
+    |--------------------------------------------------------------------------
+    | DASHBOARD
+    |--------------------------------------------------------------------------
+    */
 
-    $maintenances = Maintenance::latest()->paginate(5);
+    Route::middleware('auth')->group(function () {
 
-    $totalMaintenances = Maintenance::count();
+    Route::get('/dashboard', function () {
 
-    $termines = Maintenance::where('status', 'termine')->count();
+        $maintenances = Maintenance::latest()->paginate(5);
 
-    $encours = Maintenance::where('status', 'en cours')->count();
+        $totalMaintenances = Maintenance::count();
 
-    $critiques = Maintenance::where('status', 'en attente')->count();
+        $termines = Maintenance::where('status', 'Terminée')->count();
 
-    return view('dashboard', compact(
-        'maintenances',
-        'totalMaintenances',
-        'termines',
-        'encours',
-        'critiques'
-    ));
+        $encours = Maintenance::where('status', 'En cours')->count();
 
-});
+        $critiques = Maintenance::where('status', 'Critique')->count();
 
-Route::get('/export-pdf', function () {
+        return view('dashboard', compact(
+            'maintenances',
+            'totalMaintenances',
+            'termines',
+            'encours',
+            'critiques'
+        ));
 
-    $maintenances = Maintenance::all();
-
-    $pdf = Pdf::loadView('pdf.maintenances', compact('maintenances'));
-
-    return $pdf->download('maintenances.pdf');
+    });
 
 });
 
-/*
-|--------------------------------------------------------------------------
-| PAGE AJOUT MAINTENANCE
-|--------------------------------------------------------------------------
-*/
+    /*
+    |--------------------------------------------------------------------------
+    | EXPORT PDF
+    |--------------------------------------------------------------------------
+    */
 
-Route::get('/maintenances', function () {
+    Route::get('/export-pdf', function () {
 
-    return view('maintenance');
+        $maintenances = Maintenance::all();
 
-});
+        $pdf = Pdf::loadView('pdf.maintenances', compact('maintenances'));
 
-/*
-|--------------------------------------------------------------------------
-| AJOUTER MAINTENANCE
-|--------------------------------------------------------------------------
-*/
+        return $pdf->download('maintenances.pdf');
 
-Route::post('/maintenances', function (Request $request) {
+    });
 
-    Maintenance::create([
+    /*
+    |--------------------------------------------------------------------------
+    | PAGE AJOUT MAINTENANCE
+    |--------------------------------------------------------------------------
+    */
 
-        'equipment_id' => 1,
+    Route::get('/maintenances', function () {
 
-        'type' => 'corrective',
+        return view('maintenance');
 
-        'description' => $request->equipment,
+    });
 
-        'status' => $request->status,
+    /*
+    |--------------------------------------------------------------------------
+    | AJOUTER MAINTENANCE
+    |--------------------------------------------------------------------------
+    */
 
-    ]);
+    Route::post('/maintenances', function (Request $request) {
 
-    return redirect('/dashboard');
+        Maintenance::create([
 
-});
+            'equipment_id' => 1,
+            'type' => 'corrective',
+            'description' => $request->equipment,
+            'status' => $request->status,
 
-/*
-|--------------------------------------------------------------------------
-| DELETE MAINTENANCE
-|--------------------------------------------------------------------------
-*/
+        ]);
 
-Route::delete('/maintenances/{id}', function ($id) {
+        return redirect('/dashboard')->with('success', 'Maintenance ajoutée');
 
-    Maintenance::findOrFail($id)->delete();
+    });
 
-    return redirect('/dashboard');
+    /*
+    |--------------------------------------------------------------------------
+    | DELETE MAINTENANCE
+    |--------------------------------------------------------------------------
+    */
 
-});
+    Route::delete('/maintenances/{id}', function ($id) {
 
-/*
-|--------------------------------------------------------------------------
-| PAGE EDIT
-|--------------------------------------------------------------------------
-*/
+        Maintenance::findOrFail($id)->delete();
 
-Route::get('/maintenances/{id}/edit', function ($id) {
+        return redirect('/dashboard')->with('delete', 'Maintenance supprimée');
 
-    $maintenance = Maintenance::findOrFail($id);
+    });
 
-    return view('edit-maintenance', compact('maintenance'));
+    /*
+    |--------------------------------------------------------------------------
+    | PAGE EDIT
+    |--------------------------------------------------------------------------
+    */
 
-});
+    Route::get('/maintenances/{id}/edit', function ($id) {
 
-/*
-|--------------------------------------------------------------------------
-| UPDATE MAINTENANCE
-|--------------------------------------------------------------------------
-*/
+        $maintenance = Maintenance::findOrFail($id);
 
-Route::put('/maintenances/{id}', function (Request $request, $id) {
+        return view('edit-maintenance', compact('maintenance'));
 
-    $maintenance = Maintenance::findOrFail($id);
+    });
 
-    $maintenance->update([
+    /*
+    |--------------------------------------------------------------------------
+    | UPDATE MAINTENANCE
+    |--------------------------------------------------------------------------
+    */
 
-        'technicien' => $request->technician,
-        'date' => $request->date,
-        'status' => $request->status,
+    Route::put('/maintenances/{id}', function (Request $request, $id) {
 
-    ]);
+        $maintenance = Maintenance::findOrFail($id);
 
-    return redirect('/dashboard');
+        $maintenance->update([
 
-});
+            'status' => $request->status,
+
+        ]);
+
+        return redirect('/dashboard')->with('success', 'Maintenance mise à jour');
+
+    });
+
 
 Route::middleware('auth:sanctum')->group(function () {
 
