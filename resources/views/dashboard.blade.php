@@ -15,11 +15,11 @@
 </head>
 
 <body id="body"
-class="font-[Poppins] bg-[#F4F7FA] transition duration-300">
+class="font-[Poppins] bg-[#F4F7FA] text-[#071120] transition duration-300">
 
 <!-- LOADER -->
 <div id="loader"
-     class="fixed inset-0 bg-white z-[9999] flex items-center justify-center">
+     class="fixed inset-0 bg-white dark-card z-[9999] flex items-center justify-center">
 
     <div class="w-20 h-20 border-[6px] border-[#00C853] border-t-transparent rounded-full animate-spin"></div>
 
@@ -112,7 +112,7 @@ Swal.fire({
         <div class="flex-1 py-10 px-6 space-y-4">
 
             <a href="/dashboard"
-               class="flex items-center gap-4 bg-[#00C853] h-14 px-5 rounded-2xl text-lg font-semibold">
+               class="flex items-center gap-4  h-14 px-5 rounded-2xl text-lg font-semibold">
 
                 📊 Dashboard
 
@@ -158,7 +158,7 @@ Swal.fire({
     <main class="flex-1 overflow-y-auto">
 
         <!-- TOPBAR -->
-        <div class="h-24 bg-white px-6 lg:px-10 flex items-center justify-between border-b border-gray-200">
+        <div class="h-24 bg-white dark-card px-6 lg:px-10 flex items-center justify-between border-b border-gray-200">
 
             <div class="flex items-center">
 
@@ -198,17 +198,73 @@ Swal.fire({
                 </button>
 
                 <!-- NOTIFICATION -->
-                <div class="relative">
+                <div class="relative group">
 
-                    <button class="w-14 h-14 rounded-2xl bg-[#F4F7FA] flex items-center justify-center text-2xl">
+    <button
+        class="w-14 h-14 animate-bounce rounded-2xl bg-[#F4F7FA]
+        flex items-center justify-center text-2xl
+        hover:scale-110 transition duration-300">
 
-                        🔔
+        🔔
 
-                    </button>
+    </button>
 
-                    <div class="absolute top-2 right-2 w-3 h-3 bg-red-500 rounded-full animate-ping"></div>
+    <!-- BADGE -->
+    <div class="absolute -top-1 -right-1
+        w-6 h-6 rounded-full bg-red-500
+        text-white text-xs font-bold
+        flex items-center justify-center">
+
+        {{ $maintenances->where('status', 'Critique')->count() }}
+
+    </div>
+
+    <!-- DROPDOWN -->
+    <div
+        class="absolute right-0 mt-4 w-80 bg-white rounded-3xl shadow-2xl p-5 hidden group-hover:block z-50">
+
+        <h2 class="text-lg font-bold text-[#071120] mb-4">
+            Notifications
+        </h2>
+
+        <div class="space-y-4">
+
+            @foreach($maintenances->take(3) as $maintenance)
+
+            <div class="flex items-start gap-3 border-b pb-3">
+
+                <div class="w-10 h-10 rounded-xl
+                    flex items-center justify-center
+
+                    {{ $maintenance->status == 'Critique'
+                        ? 'bg-red-100 text-red-500'
+                        : 'bg-green-100 text-green-500' }}">
+
+                    {{ $maintenance->status == 'Critique' ? '⚠️' : '✅' }}
 
                 </div>
+
+                <div>
+
+                    <p class="font-semibold text-sm text-[#071120]">
+                        Maintenance {{ $maintenance->status }}
+                    </p>
+
+                    <p class="text-xs text-gray-500">
+                        Equipment {{ $maintenance->equipment_id }}
+                    </p>
+
+                </div>
+
+            </div>
+
+            @endforeach
+
+        </div>
+
+    </div>
+
+</div>
 
                 <!-- SEARCH -->
                 <div class="w-[320px] h-14 bg-[#F4F7FA] rounded-2xl px-5 flex items-center">
@@ -244,7 +300,7 @@ Swal.fire({
 
                 </div>
 
-                <div class="bg-white rounded-3xl p-7 shadow-sm hover:scale-105 hover:shadow-2xl transition duration-300">
+                <div class="bg-white dark-card rounded-3xl p-7 shadow-sm hover:scale-105 hover:shadow-2xl transition duration-300">
 
                     <p class="text-gray-500 mb-3">
                         Terminées
@@ -256,7 +312,7 @@ Swal.fire({
 
                 </div>
 
-                <div class="bg-white rounded-3xl p-7 shadow-sm hover:scale-105 hover:shadow-2xl transition duration-300">
+                <div class="bg-white dark-card rounded-3xl p-7 shadow-sm hover:scale-105 hover:shadow-2xl transition duration-300">
 
                     <p class="text-gray-500 mb-3">
                         En cours
@@ -268,7 +324,7 @@ Swal.fire({
 
                 </div>
 
-                <div class="bg-white rounded-3xl p-7 shadow-sm hover:scale-105 hover:shadow-2xl transition duration-300">
+                <div class="bg-white dark-card rounded-3xl p-7 shadow-sm hover:scale-105 hover:shadow-2xl transition duration-300">
 
                     <p class="text-gray-500 mb-3">
                         Critiques
@@ -286,7 +342,8 @@ Swal.fire({
             <div class="grid grid-cols-1 xl:grid-cols-2 gap-8 mb-10">
 
                 <!-- CHART -->
-                <div class="bg-white rounded-3xl p-7 shadow-sm hover:scale-105 hover:shadow-2xl transition duration-300">
+                <div class="bg-white/80 backdrop-blur-xl dark-card
+                    border border-white/20 rounded-3xl p-7 shadow-sm hover:scale-105 hover:shadow-2xl transition duration-300">
 
                     <h2 class="text-2xl font-bold text-[#071120] mb-6">
                         Statistiques Maintenances
@@ -295,6 +352,109 @@ Swal.fire({
                     <canvas id="maintenanceChart"></canvas>
 
                 </div>
+
+                <!-- TIMELINE -->
+<div class="bg-white dark-card rounded-3xl p-8 shadow-sm mb-10">
+
+    <div class="flex items-center justify-between mb-8">
+
+        <div>
+
+            <h2 class="text-2xl font-bold text-[#071120]">
+                Activité récente
+            </h2>
+
+            <p class="text-gray-500 mt-1">
+                Dernières actions du système
+            </p>
+
+        </div>
+
+        <div class="w-14 h-14 rounded-2xl bg-[#00C853]/10
+            flex items-center justify-center text-2xl">
+
+            ⚡
+
+        </div>
+
+    </div>
+
+    <div class="space-y-6">
+
+        @foreach($maintenances->take(5) as $maintenance)
+
+        <div class="flex items-start gap-5
+            hover:bg-[#F4F7FA]
+            transition duration-300
+            p-4 rounded-2xl">
+
+            <!-- ICON -->
+            <div class="min-w-[55px] h-[55px]
+                rounded-2xl flex items-center justify-center text-2xl
+
+                {{ $maintenance->status == 'Critique'
+                    ? 'bg-red-100 text-red-500'
+                    : '' }}
+
+                {{ $maintenance->status == 'En cours'
+                    ? 'bg-yellow-100 text-yellow-500'
+                    : '' }}
+
+                {{ $maintenance->status == 'Terminée'
+                    ? 'bg-green-100 text-green-500'
+                    : '' }}
+            ">
+
+                @if($maintenance->status == 'Critique')
+
+                    🔴
+
+                @elseif($maintenance->status == 'En cours')
+
+                    🟡
+
+                @else
+
+                    🟢
+
+                @endif
+
+            </div>
+
+            <!-- CONTENT -->
+            <div class="flex-1">
+
+                <div class="flex items-center justify-between">
+
+                    <h3 class="font-bold text-[#071120] text-lg">
+
+                        Maintenance {{ $maintenance->status }}
+
+                    </h3>
+
+                    <span class="text-sm text-gray-400">
+
+                        {{ $maintenance->created_at->diffForHumans() }}
+
+                    </span>
+
+                </div>
+
+                <p class="text-gray-500 mt-1">
+
+                    Equipment {{ $maintenance->equipment_id }}
+
+                </p>
+
+                </div>
+
+            </div>
+
+            @endforeach
+
+        </div>
+
+    </div>
 
                 <!-- ACTIVITY -->
                 <div class="bg-[#071120] rounded-3xl p-8 text-white">
@@ -348,7 +508,7 @@ Swal.fire({
 
                     <div>
 
-                        <h2 class="text-2xl font-bold text-[#071120]">
+                        <h2 class="counter text-2xl font-bold text-[#071120]">
                             Dernières maintenances
                         </h2>
 
@@ -386,7 +546,10 @@ Swal.fire({
 
                     <thead>
 
-                        <tr class="border-b border-gray-200 text-gray-500">
+                        <tr class="border-b border-gray-100
+                            hover:bg-[#F4F7FA]
+                            dark:hover:bg-[#1F2937]
+                            transition duration-300">
 
                             <th class="py-4">ID</th>
                             <th>Équipement</th>
@@ -461,6 +624,62 @@ Swal.fire({
                         </tr>
 
                         @endforeach
+
+                        <style>
+
+                            .dark-mode {
+                                background: #071120 !important;
+                                color: white !important;
+                            }
+
+                            .dark-mode .dark-card {
+                                background: #111827 !important;
+                                color: white !important;
+                            }
+
+                            .dark-mode table {
+                                color: white !important;
+                            }
+
+                            .dark-mode input {
+                                background: #1F2937 !important;
+                                color: white !important;
+                            }
+
+                            .dark-mode .text-gray-500,
+                            .dark-mode .text-gray-400 {
+                                color: #9CA3AF !important;
+                            }
+
+                            </style>
+
+                            <script>
+
+                                function toggleDarkMode() {
+
+                                    const body = document.getElementById('body');
+
+                                    body.classList.toggle('dark-mode');
+
+                                    localStorage.setItem(
+                                        'darkMode',
+                                        body.classList.contains('dark-mode')
+                                    );
+
+                                }
+
+                                window.onload = () => {
+
+                                    if(localStorage.getItem('darkMode') === 'true') {
+
+                                        document.getElementById('body')
+                                            .classList.add('dark-mode');
+
+                                    }
+
+                                }
+
+                            </script>
 
                     </tbody>
 
@@ -588,6 +807,102 @@ window.addEventListener('load', () => {
 });
 
 </script>
+
+<style>
+
+.dark-mode {
+
+    background:
+    linear-gradient(
+        135deg,
+        #071120,
+        #0F172A,
+        #111827
+    ) !important;
+
+    background-size: 400% 400%;
+
+    animation: gradientMove 10s ease infinite;
+
+}
+
+@keyframes gradientMove {
+
+    0% {
+        background-position: 0% 50%;
+    }
+
+    50% {
+        background-position: 100% 50%;
+    }
+
+    100% {
+        background-position: 0% 50%;
+    }
+
+}
+
+</style>
+
+<script>
+
+const counters = document.querySelectorAll('.counter');
+
+counters.forEach(counter => {
+
+    let start = 0;
+
+    const end = +counter.innerText;
+
+    const speed = 40;
+
+    const updateCounter = () => {
+
+        start++;
+
+        counter.innerText = start;
+
+        if(start < end) {
+
+            setTimeout(updateCounter, speed);
+
+        }
+
+    }
+
+    updateCounter();
+
+});
+
+</script>
+
+<style>
+
+main {
+
+    animation: fadePage .7s ease;
+
+}
+
+@keyframes fadePage {
+
+    from {
+
+        opacity: 0;
+        transform: translateY(20px);
+
+    }
+
+    to {
+
+        opacity: 1;
+        transform: translateY(0);
+
+    }
+
+}
+
+</style>
 
 </body>
 </html>

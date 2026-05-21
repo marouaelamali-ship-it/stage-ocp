@@ -154,6 +154,8 @@ Route::post('/signout', function (Request $request) {
 
     Route::post('/maintenances', function (Request $request) {
 
+        if(auth()->user()->role != 'admin') abort(403);
+
         Maintenance::create([
 
             'equipment_id' => 1,
@@ -175,6 +177,8 @@ Route::post('/signout', function (Request $request) {
 
     Route::delete('/maintenances/{id}', function ($id) {
 
+        if(auth()->user()->role != 'admin') abort(403);
+
         Maintenance::findOrFail($id)->delete();
 
         return redirect('/dashboard')->with('delete', 'Maintenance supprimée');
@@ -189,6 +193,8 @@ Route::post('/signout', function (Request $request) {
 
     Route::get('/maintenances/{id}/edit', function ($id) {
 
+        if(auth()->user()->role != 'admin') abort(403);
+
         $maintenance = Maintenance::findOrFail($id);
 
         return view('edit-maintenance', compact('maintenance'));
@@ -202,6 +208,8 @@ Route::post('/signout', function (Request $request) {
     */
 
     Route::put('/maintenances/{id}', function (Request $request, $id) {
+
+        if(auth()->user()->role != 'admin') abort(403);
 
         $maintenance = Maintenance::findOrFail($id);
 
@@ -247,6 +255,8 @@ Route::get('/equipments', function () {
 
 Route::post('/equipments', function (Request $request) {
 
+    if(auth()->user()->role != 'admin') abort(403);
+
     Equipment::create([
 
         'name' => $request->name,
@@ -266,6 +276,8 @@ Route::post('/equipments', function (Request $request) {
 */
 
 Route::delete('/equipments/{id}', function ($id) {
+
+    if(auth()->user()->role != 'admin') abort(403);
 
     Equipment::findOrFail($id)->delete();
 
@@ -309,6 +321,8 @@ Route::get('/equipments', function () {
 
 Route::post('/equipments', function (Request $request) {
 
+    if(auth()->user()->role != 'admin') abort(403);
+
     Equipment::create([
 
         'name' => $request->name,
@@ -323,6 +337,8 @@ Route::post('/equipments', function (Request $request) {
 });
 
 Route::delete('/equipments/{id}', function ($id) {
+
+    if(auth()->user()->role != 'admin') abort(403);
 
     Equipment::findOrFail($id)->delete();
 
@@ -340,6 +356,8 @@ Route::get('/equipments/{id}/edit', function ($id) {
 });
 
 Route::put('/equipments/{id}', function (Request $request, $id) {
+
+    if(auth()->user()->role != 'admin') abort(403);
 
     $equipment = Equipment::findOrFail($id);
 

@@ -61,6 +61,9 @@
 
     </div>
 
+@if(auth()->user()->role == 'admin')
+
+
     <!-- AJOUT -->
     <div class="bg-white rounded-3xl p-8 shadow mb-10">
 
@@ -184,6 +187,8 @@
     </div>
 
 </div>
+
+@endif
 
 <script>
 
