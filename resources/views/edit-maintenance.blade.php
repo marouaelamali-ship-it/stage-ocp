@@ -105,15 +105,15 @@
                     name="status"
                     class="w-full h-16 rounded-2xl border border-gray-200 px-6 outline-none focus:border-[#00C853]">
 
-                    <option {{ $maintenance->status == 'Terminée' ? 'selected' : '' }}>
+                    <option value="Terminee" {{ $maintenance->status == 'Terminee' ? 'selected' : '' }}>
                         Terminée
                     </option>
 
-                    <option {{ $maintenance->status == 'En cours' ? 'selected' : '' }}>
+                    <option value="En cours" {{ $maintenance->status == 'En cours' ? 'selected' : '' }}>
                         En cours
                     </option>
 
-                    <option {{ $maintenance->status == 'Critique' ? 'selected' : '' }}>
+                    <option value="Critique" {{ $maintenance->status == 'Critique' ? 'selected' : '' }}>
                         Critique
                     </option>
 

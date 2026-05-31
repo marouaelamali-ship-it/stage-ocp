@@ -49,42 +49,231 @@
             </div>
 
             <!-- MENU -->
-            <div class="hidden xl:flex items-center gap-10 text-[#18A558] font-semibold">
+        <div class="hidden xl:flex items-center gap-10 text-[#18A558] font-semibold">
 
-                <a href="#">À propos</a>
-                <a href="#">Nos activités</a>
-                <a href="#">Développement durable</a>
-                <a href="#">Investisseurs</a>
-                <a href="#">Médias</a>
+            <!-- A PROPOS -->
+            <div class="relative group">
+
+                <a href="#" class="hover:text-[#00C853] transition">
+                    À propos
+                </a>
+
+                <div class="absolute top-full left-0 mt-4 hidden group-hover:block w-80 bg-white rounded-2xl shadow-2xl p-6 z-50">
+
+                    <h3 class="text-[#18A558] font-bold text-lg mb-4">
+                        À propos du Groupe OCP
+                    </h3>
+
+                    <ul class="space-y-3 text-gray-700">
+
+                        <li class="hover:text-[#18A558] cursor-pointer">
+                            Notre raison d'être
+                        </li>
+
+                        <li class="hover:text-[#18A558] cursor-pointer">
+                            Notre vision
+                        </li>
+
+                        <li class="hover:text-[#18A558] cursor-pointer">
+                            Notre stratégie
+                        </li>
+
+                        <li class="hover:text-[#18A558] cursor-pointer">
+                            Notre leadership
+                        </li>
+
+                        <li class="hover:text-[#18A558] cursor-pointer">
+                            Notre parcours
+                        </li>
+
+                    </ul>
+
+                </div>
 
             </div>
 
+            <!-- NOS ACTIVITES -->
+            <div class="relative group">
+
+                <a href="#" class="hover:text-[#00C853] transition">
+                    Nos activités
+                </a>
+
+                <div class="absolute top-full left-0 mt-4 hidden group-hover:block w-80 bg-white rounded-2xl shadow-2xl p-6 z-50">
+
+                    <h3 class="text-[#18A558] font-bold text-lg mb-4">
+                        Nos activités
+                    </h3>
+
+                    <ul class="space-y-3 text-gray-700">
+
+                        <li class="hover:text-[#18A558] cursor-pointer">
+                            Extraction minière
+                        </li>
+
+                        <li class="hover:text-[#18A558] cursor-pointer">
+                            Production d'engrais
+                        </li>
+
+                        <li class="hover:text-[#18A558] cursor-pointer">
+                            Innovation et développement
+                        </li>
+
+                        <li class="hover:text-[#18A558] cursor-pointer">
+                            Logistique et distribution
+                        </li>
+
+                    </ul>
+
+                </div>
+
+            </div>
+
+            <!-- DEVELOPPEMENT DURABLE -->
+            <div class="relative group">
+
+                <a href="#" class="hover:text-[#00C853] transition">
+                    Développement durable
+                </a>
+
+                <div class="absolute top-full left-0 mt-4 hidden group-hover:block w-80 bg-white rounded-2xl shadow-2xl p-6 z-50">
+
+                    <ul class="space-y-3 text-gray-700">
+
+                        <li>Énergie verte</li>
+                        <li>Gestion de l'eau</li>
+                        <li>Agriculture durable</li>
+                        <li>Impact social</li>
+
+                    </ul>
+
+                </div>
+
+            </div>
+
+            <!-- INVESTISSEURS -->
+            <div class="relative group">
+
+                <a href="#" class="hover:text-[#00C853] transition">
+                    Investisseurs
+                </a>
+
+                <div class="absolute top-full left-0 mt-4 hidden group-hover:block w-80 bg-white rounded-2xl shadow-2xl p-6 z-50">
+
+                    <ul class="space-y-3 text-gray-700">
+
+                        <li>Rapports financiers</li>
+                        <li>Résultats annuels</li>
+                        <li>Gouvernance</li>
+                        <li>Publications</li>
+
+                    </ul>
+
+                </div>
+
+            </div>
+
+    <!-- MEDIAS -->
+    <div class="relative group">
+
+        <a href="#" class="hover:text-[#00C853] transition">
+            Médias
+        </a>
+
+        <div class="absolute top-full left-0 mt-4 hidden group-hover:block w-80 bg-white rounded-2xl shadow-2xl p-6 z-50">
+
+            <ul class="space-y-3 text-gray-700">
+
+                <li>Actualités</li>
+                <li>Communiqués</li>
+                <li>Événements</li>
+                <li>Galerie photos</li>
+
+            </ul>
+
         </div>
+
+    </div>
+
+</div>
+</div>
+
 
         <!-- RIGHT -->
         <div class="flex items-center gap-8">
 
-            <a href="#" class="text-[#18A558] font-semibold">
-                Contact
-            </a>
+            <div class="relative group">
 
-            <div class="w-12 h-12 rounded-full border-2 border-[#18A558] flex items-center justify-center text-[#18A558] font-bold">
-                FR
+                <a href="#" class="text-[#18A558] font-semibold">
+                    Contact
+                </a>
+
+                <div class="hidden group-hover:block absolute top-10 right-0 w-72 bg-white rounded-2xl shadow-2xl p-5 z-50">
+
+                    <h3 class="font-bold text-[#18A558] text-lg mb-3">
+                        Contact OCP
+                    </h3>
+
+                    <p class="text-gray-700 mb-2">
+                        📞 +212 5 23 53 53 53
+                    </p>
+
+                    <p class="text-gray-700 mb-2">
+                        ✉️ contact@ocpgroup.ma
+                    </p>
+
+                    <p class="text-gray-700">
+                        📍 Casablanca, Maroc
+                    </p>
+
+                </div>
+
+            </div>
+
+            <div class="relative group">
+
+                <div class="w-12 h-12 rounded-full border-2 border-[#18A558] flex items-center justify-center text-[#18A558] font-bold cursor-pointer">
+                    FR
+                </div>
+
+                <div class="hidden group-hover:block absolute top-14 right-0 bg-white rounded-2xl shadow-xl p-4 w-40 z-50">
+
+                    <p class="py-2 hover:text-[#18A558] cursor-pointer">
+                        🇫🇷 Français
+                    </p>
+
+                    <p class="py-2 hover:text-[#18A558] cursor-pointer">
+                        🇬🇧 English
+                    </p>
+
+                    <p class="py-2 hover:text-[#18A558] cursor-pointer">
+                        🇲🇦 العربية
+                    </p>
+
+                </div>
+
             </div>
 
             <!-- SEARCH -->
-            <svg xmlns="http://www.w3.org/2000/svg"
-                class="w-7 h-7 text-[#18A558]"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor">
+            <div class="relative group">
 
-                <path stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M21 21l-4.35-4.35m1.85-5.15a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                <button class="text-[#18A558]">
 
-            </svg>
+                    🔍
+
+                </button>
+
+                <div class="hidden group-hover:block absolute top-12 right-0 bg-white p-4 rounded-2xl shadow-2xl w-80 z-50">
+
+                    <input
+                        type="text"
+                        placeholder="Rechercher..."
+                        class="w-full border border-gray-200 rounded-xl px-4 py-3 outline-none"
+                    >
+
+                </div>
+
+            </div>
 
         </div>
 
@@ -246,6 +435,9 @@
                     </div>
 
                 </form>
+
+            
+
 
                 <!-- FOOTER -->
                 <div class="mt-20 text-center text-gray-600 text-sm">

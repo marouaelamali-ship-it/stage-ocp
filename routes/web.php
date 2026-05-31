@@ -94,28 +94,65 @@ Route::post('/signout', function (Request $request) {
 
     Route::middleware('auth')->group(function () {
 
-    Route::get('/dashboard', function () {
+        /* Route::get('/dashboard', function () {
 
-        $maintenances = Maintenance::latest()->paginate(5);
+            $maintenances = Maintenance::latest()->paginate(5);
 
-        $totalMaintenances = Maintenance::count();
+            $totalMaintenances = Maintenance::count();
 
-        $termines = Maintenance::where('status', 'Terminée')->count();
+            $termines = Maintenance::where('status', 'Terminée')->count();
 
-        $encours = Maintenance::where('status', 'En cours')->count();
+            $encours = Maintenance::where('status', 'En cours')->count();
 
-        $critiques = Maintenance::where('status', 'Critique')->count();
+            $critiques = Maintenance::where('status', 'Critique')->count();
 
-        return view('dashboard', compact(
-            'maintenances',
-            'totalMaintenances',
-            'termines',
-            'encours',
-            'critiques'
-        ));
+            return view('dashboard', compact(
+                'maintenances',
+                'totalMaintenances',
+                'termines',
+                'encours',
+                'critiques'
+            ));
+            */
+            
+            Route::get('/dashboard', function () {
 
-    });
+                $maintenances = \App\Models\Maintenance::latest()->paginate(5);
 
+                $totalMaintenances = \App\Models\Maintenance::count();
+
+                $termines = \App\Models\Maintenance::where(
+                    'status',
+                    'Terminée'
+                )->count();
+
+                $encours = \App\Models\Maintenance::where(
+                    'status',
+                    'En cours'
+                )->count();
+
+                $critiques = \App\Models\Maintenance::where(
+                    'status',
+                    'Critique'
+                )->count();
+
+                $equipments = \App\Models\Equipment::count();
+
+                $users = \App\Models\User::count();
+
+                return view('dashboard', compact(
+                    'maintenances',
+                    'totalMaintenances',
+                    'termines',
+                    'encours',
+                    'critiques',
+                    'equipments',
+                    'users'
+                ));
+
+            })->middleware('auth');
+
+        
 
 
     /*
@@ -142,7 +179,9 @@ Route::post('/signout', function (Request $request) {
 
     Route::get('/maintenances', function () {
 
-        return view('maintenance');
+        $equipments = \App\Models\Equipment::all();
+
+        return view('maintenance', compact('equipments'));
 
     });
 
@@ -158,7 +197,7 @@ Route::post('/signout', function (Request $request) {
 
         Maintenance::create([
 
-            'equipment_id' => 1,
+            'equipment_id' => $request->equipment_id,
             'type' => 'corrective',
             'description' => $request->equipment,
             'status' => $request->status,
@@ -231,6 +270,19 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/equipments', [EquipmentController::class, 'index']);
     Route::post('/equipments', [EquipmentController::class, 'store']);
 
+    Route::get('/search-maintenances', function (Request $request) {
+
+        $search = $request->search;
+
+        $maintenances = \App\Models\Maintenance::where(
+            'status',
+            'LIKE',
+            "%$search%"
+        )->get();
+
+        return response()->json($maintenances);
+
+    });
 });
 
 /*
@@ -323,18 +375,35 @@ Route::post('/equipments', function (Request $request) {
 
     if(auth()->user()->role != 'admin') abort(403);
 
-    Equipment::create([
+    Equipment::Route::post('/equipments', function (Request $request) {
+
+    $imageName = null;
+
+    if($request->hasFile('image')) {
+
+        $imageName = time().'.'.$request->image->extension();
+
+        $request->image->move(
+            public_path('uploads'),
+            $imageName
+        );
+
+    }
+
+    \App\Models\Equipment::create([
 
         'name' => $request->name,
-        'type' => $request->type,
+        'reference' => $request->reference,
         'status' => $request->status,
+        'image' => $imageName,
 
     ]);
 
-    return redirect('/equipments')
-        ->with('success', 'Équipement ajouté');
+    return back()->with('success', 'Equipement ajouté');
 
 });
+});
+
 
 Route::delete('/equipments/{id}', function ($id) {
 
