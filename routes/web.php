@@ -199,7 +199,7 @@ Route::post('/signout', function (Request $request) {
 
             'equipment_id' => $request->equipment_id,
             'type' => 'corrective',
-            'description' => $request->equipment,
+            'description' => $request->description,
             'status' => $request->status,
 
         ]);
@@ -236,7 +236,12 @@ Route::post('/signout', function (Request $request) {
 
         $maintenance = Maintenance::findOrFail($id);
 
-        return view('edit-maintenance', compact('maintenance'));
+        $equipments = Equipment::all();
+
+        return view(
+            'edit-maintenance',
+            compact('maintenance', 'equipments')
+        );
 
     });
 
@@ -248,22 +253,21 @@ Route::post('/signout', function (Request $request) {
 
     Route::put('/maintenances/{id}', function (Request $request, $id) {
 
-        if(auth()->user()->role != 'admin') abort(403);
+    if(auth()->user()->role != 'admin') abort(403);
 
-        $maintenance = Maintenance::findOrFail($id);
+    $maintenance = Maintenance::findOrFail($id);
 
         $maintenance->update([
-
+            'equipment_id' => $request->equipment_id,
+            'description' => $request->description,
             'status' => $request->status,
-
         ]);
 
         return redirect('/dashboard')->with('success', 'Maintenance mise à jour');
 
     });
 
-
-Route::middleware('auth:sanctum')->group(function () {
+    Route::middleware('auth:sanctum')->group(function () {
 
     Route::post('/logout', [AuthController::class, 'logout']);
 
@@ -309,15 +313,31 @@ Route::post('/equipments', function (Request $request) {
 
     if(auth()->user()->role != 'admin') abort(403);
 
+    $imageName = null;
+
+    if($request->hasFile('image')) {
+
+        $imageName = time().'.'.$request->image->extension();
+
+        $request->image->move(
+            public_path('uploads'),
+            $imageName
+        );
+    }
+
     Equipment::create([
 
         'name' => $request->name,
-        'serial_number' => $request->serial_number,
+        'reference' => $request->reference,
         'status' => $request->status,
+        'image' => $imageName,
 
     ]);
 
-    return back()->with('success', 'Équipement ajouté');
+    return back()->with(
+        'success',
+        'Equipement ajouté'
+    );
 
 });
 
@@ -369,39 +389,6 @@ Route::get('/equipments', function () {
         'critiques'
     ));
 
-});
-
-Route::post('/equipments', function (Request $request) {
-
-    if(auth()->user()->role != 'admin') abort(403);
-
-    Equipment::Route::post('/equipments', function (Request $request) {
-
-    $imageName = null;
-
-    if($request->hasFile('image')) {
-
-        $imageName = time().'.'.$request->image->extension();
-
-        $request->image->move(
-            public_path('uploads'),
-            $imageName
-        );
-
-    }
-
-    \App\Models\Equipment::create([
-
-        'name' => $request->name,
-        'reference' => $request->reference,
-        'status' => $request->status,
-        'image' => $imageName,
-
-    ]);
-
-    return back()->with('success', 'Equipement ajouté');
-
-});
 });
 
 

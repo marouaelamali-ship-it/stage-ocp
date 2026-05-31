@@ -49,16 +49,28 @@
             <div>
 
                 <label class="block text-[#071120] font-semibold mb-3">
-                    Nom équipement
+                    Equipement
                 </label>
 
-                <input
-                    name="equipment"
-                    type="text"
-                    placeholder="Machine industrielle..."
+                <select
+                    name="equipment_id"
                     class="w-full h-16 rounded-2xl border border-gray-200 px-6 outline-none focus:border-[#00C853]"
                     required
                 >
+
+                    <option value="">
+                        Choisir un équipement
+                    </option>
+
+                    @foreach($equipments as $equipment)
+
+                        <option value="{{ $equipment->id }}">
+                            {{ $equipment->name }}
+                        </option>
+
+                    @endforeach
+
+                </select>
 
             </div>
 
@@ -113,7 +125,7 @@
 
                 </select>
 
-</div>
+            </div>
             <!-- BUTTON -->
             <button
                 type="submit"
@@ -122,6 +134,21 @@
                 Ajouter Maintenance
 
             </button>
+
+            <div>
+
+                <label class="block text-[#071120] font-semibold mb-3">
+                    Description
+                </label>
+
+                <textarea
+                    name="description"
+                    class="w-full rounded-2xl border border-gray-200 p-4"
+                    rows="4"
+                    required
+                ></textarea>
+
+            </div>
 
         </form>
 

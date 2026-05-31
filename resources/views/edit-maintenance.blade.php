@@ -46,89 +46,63 @@
             @csrf
             @method('PUT')
 
-            <!-- EQUIPEMENT -->
-            <div>
-
-                <label class="block text-[#071120] font-semibold mb-3">
-                    Nom équipement
-                </label>
-
-                <input
-                    name="equipment"
-                    type="text"
-                    value="{{ $maintenance->equipment }}"
-                    class="w-full h-16 rounded-2xl border border-gray-200 px-6 outline-none focus:border-[#00C853]"
-                >
-
-            </div>
-
-            <!-- TECHNICIEN -->
-            <div>
-
-                <label class="block text-[#071120] font-semibold mb-3">
-                    Technicien
-                </label>
-
-                <input
-                    name="technician"
-                    type="text"
-                    value="{{ $maintenance->technicien }}"
-                    class="w-full h-16 rounded-2xl border border-gray-200 px-6 outline-none focus:border-[#00C853]"
-                >
-
-            </div>
-
-            <!-- DATE -->
-            <div>
-
-                <label class="block text-[#071120] font-semibold mb-3">
-                    Date
-                </label>
-
-                <input
-                    name="date"
-                    type="date"
-                    value="{{ $maintenance->date }}"
-                    class="w-full h-16 rounded-2xl border border-gray-200 px-6 outline-none focus:border-[#00C853]"
-                >
-
-            </div>
-
-            <!-- STATUS -->
             <div>
 
                 <label class="block text-[#071120] font-semibold mb-3">
                     Statut
                 </label>
 
-                <select
-                    name="status"
-                    class="w-full h-16 rounded-2xl border border-gray-200 px-6 outline-none focus:border-[#00C853]">
+            <select
+                name="status"
+                class="w-full h-16 rounded-2xl border border-gray-200 px-6 outline-none focus:border-[#00C853]">
 
-                    <option value="Terminee" {{ $maintenance->status == 'Terminee' ? 'selected' : '' }}>
-                        Terminée
-                    </option>
+                <option value="en attente"
+                    {{ $maintenance->status == 'en attente' ? 'selected' : '' }}>
+                    En attente
+                </option>
 
-                    <option value="En cours" {{ $maintenance->status == 'En cours' ? 'selected' : '' }}>
-                        En cours
-                    </option>
+                <option value="en cours"
+                    {{ $maintenance->status == 'en cours' ? 'selected' : '' }}>
+                    En cours
+                </option>
 
-                    <option value="Critique" {{ $maintenance->status == 'Critique' ? 'selected' : '' }}>
-                        Critique
-                    </option>
+                <option value="termine"
+                    {{ $maintenance->status == 'termine' ? 'selected' : '' }}>
+                    Terminée
+                </option>
 
-                </select>
+            </select>
 
             </div>
 
-            <!-- BUTTON -->
             <button
                 type="submit"
-                class="w-full h-16 rounded-2xl bg-blue-500 hover:bg-blue-600 transition text-white text-xl font-bold">
+                class="w-full h-16 rounded-2xl bg-blue-500 hover:bg-blue-600 text-white text-xl font-bold">
 
                 Modifier Maintenance
 
             </button>
+
+            <select name="equipment_id" class="w-full h-16 rounded-2xl border px-6">
+
+                @foreach($equipments as $equipment)
+
+                    <option
+                        value="{{ $equipment->id }}"
+                        {{ $maintenance->equipment_id == $equipment->id ? 'selected' : '' }}>
+
+                        {{ $equipment->name }}
+
+                    </option>
+
+                @endforeach
+
+                <textarea
+                    name="description"
+                    rows="4"
+                    class="w-full rounded-2xl border border-gray-200 p-4">{{ $maintenance->description }}</textarea>
+
+            </select>
 
         </form>
 
