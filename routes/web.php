@@ -121,7 +121,7 @@ Route::post('/signout', function (Request $request) {
 
                 $totalMaintenances = \App\Models\Maintenance::count();
 
-                $termines = \App\Models\Maintenance::where(
+                /*$termines = \App\Models\Maintenance::where(
                     'status',
                     'Terminée'
                 )->count();
@@ -134,25 +134,54 @@ Route::post('/signout', function (Request $request) {
                 $critiques = \App\Models\Maintenance::where(
                     'status',
                     'Critique'
+                )->count();*/
+
+                $termines = \App\Models\Maintenance::where(
+                    'status',
+                    'termine'
                 )->count();
+
+                $encours = \App\Models\Maintenance::where(
+                    'status',
+                    'en cours'
+                )->count();
+
+                $attente = \App\Models\Maintenance::where(
+                    'status',
+                    'en attente'
+                )->count();
+
 
                 $equipments = \App\Models\Equipment::count();
 
                 $users = \App\Models\User::count();
+
+                $monthlyMaintenances = [];
+
+                    for ($month = 1; $month <= 12; $month++) {
+
+                        $monthlyMaintenances[] = \App\Models\Maintenance::whereMonth(
+                            'created_at',
+                            $month
+                        )->count();
+
+                    }
+        
 
                 return view('dashboard', compact(
                     'maintenances',
                     'totalMaintenances',
                     'termines',
                     'encours',
-                    'critiques',
+                    'attente',
                     'equipments',
-                    'users'
+                    'users',
+                    'monthlyMaintenances'
                 ));
 
             })->middleware('auth');
 
-        
+            
 
 
     /*

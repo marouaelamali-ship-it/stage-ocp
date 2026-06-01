@@ -354,72 +354,72 @@ Swal.fire({
                 </div>
 
                 <!-- TIMELINE -->
-<div class="bg-white dark-card rounded-3xl p-8 shadow-sm mb-10">
+                <div class="bg-white dark-card rounded-3xl p-8 shadow-sm mb-10">
 
-    <div class="flex items-center justify-between mb-8">
+            <div class="flex items-center justify-between mb-8">
 
-        <div>
+                <div>
 
-            <h2 class="text-2xl font-bold text-[#071120]">
-                Activité récente
-            </h2>
+                    <h2 class="text-2xl font-bold text-[#071120]">
+                        Activité récente
+                    </h2>
 
-            <p class="text-gray-500 mt-1">
-                Dernières actions du système
-            </p>
+                    <p class="text-gray-500 mt-1">
+                        Dernières actions du système
+                    </p>
 
-        </div>
+                </div>
 
-        <div class="w-14 h-14 rounded-2xl bg-[#00C853]/10
-            flex items-center justify-center text-2xl">
+                <div class="w-14 h-14 rounded-2xl bg-[#00C853]/10
+                    flex items-center justify-center text-2xl">
 
-            ⚡
+                    ⚡
 
-        </div>
-
-    </div>
-
-    <div class="space-y-6">
-
-        @foreach($maintenances->take(5) as $maintenance)
-
-        <div class="flex items-start gap-5
-            hover:bg-[#F4F7FA]
-            transition duration-300
-            p-4 rounded-2xl">
-
-            <!-- ICON -->
-            <div class="min-w-[55px] h-[55px]
-                rounded-2xl flex items-center justify-center text-2xl
-
-                {{ $maintenance->status == 'Critique'
-                    ? 'bg-red-100 text-red-500'
-                    : '' }}
-
-                {{ $maintenance->status == 'En cours'
-                    ? 'bg-yellow-100 text-yellow-500'
-                    : '' }}
-
-                {{ $maintenance->status == 'Terminée'
-                    ? 'bg-green-100 text-green-500'
-                    : '' }}
-            ">
-
-                @if($maintenance->status == 'Critique')
-
-                    🔴
-
-                @elseif($maintenance->status == 'En cours')
-
-                    🟡
-
-                @else
-
-                    🟢
-
-                @endif
+                </div>
 
             </div>
+
+            <div class="space-y-6">
+
+                @foreach($maintenances->take(5) as $maintenance)
+
+                <div class="flex items-start gap-5
+                    hover:bg-[#F4F7FA]
+                    transition duration-300
+                    p-4 rounded-2xl">
+
+                    <!-- ICON -->
+                    <div class="min-w-[55px] h-[55px]
+                        rounded-2xl flex items-center justify-center text-2xl
+
+                        {{ $maintenance->status == 'Critique'
+                            ? 'bg-red-100 text-red-500'
+                            : '' }}
+
+                        {{ $maintenance->status == 'En cours'
+                            ? 'bg-yellow-100 text-yellow-500'
+                            : '' }}
+
+                        {{ $maintenance->status == 'Terminée'
+                            ? 'bg-green-100 text-green-500'
+                            : '' }}
+                    ">
+
+                        @if($maintenance->status == 'Critique')
+
+                            🔴
+
+                        @elseif($maintenance->status == 'En cours')
+
+                            🟡
+
+                        @else
+
+                            🟢
+
+                        @endif
+
+                    </div>
 
             <!-- CONTENT -->
             <div class="flex-1">
@@ -903,6 +903,113 @@ main {
 }
 
 </style>
+
+    <!--<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+
+            const ctx = document.getElementById('maintenanceChart');
+
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: [
+                        'Terminées',
+                        'En cours',
+                        'En attente'
+                    ],
+                    datasets: [{
+                        data: [
+                            {{ $termines }},
+                            {{ $encours }},
+                            {{ $attente }}
+                        ],
+                        backgroundColor: [
+                            '#1E293B',
+                            '#475569',
+                            '#94A3B8'
+                        ],
+                        borderRadius: 10
+                    }]
+                },
+                options: {
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                stepSize: 1
+                            }
+                        }
+                    }
+                }
+            });
+
+        });
+    </script>-->
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+
+    const ctx = document.getElementById('maintenanceChart');
+
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: [
+                'Jan',
+                'Feb',
+                'Mar',
+                'Apr',
+                'May',
+                'Jun',
+                'Jul',
+                'Aug',
+                'Sep',
+                'Oct',
+                'Nov',
+                'Dec'
+            ],
+            datasets: [{
+                label: 'Maintenances',
+                data: @json($monthlyMaintenances),
+                tension: 0.4,
+                fill: false,
+                borderColor: '#071120',
+                borderWidth: 3,
+                pointRadius: 5,
+                pointHoverRadius: 7
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    display: true
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        stepSize: 1
+                    }
+                }
+            }
+        }
+    });
+
+});
+</script>
+
+
 
 </body>
 </html>
