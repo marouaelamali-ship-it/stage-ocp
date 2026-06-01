@@ -12,16 +12,21 @@ return new class extends Migration
 
             $table->id();
 
-            $table->unsignedBigInteger('maintenance_id');
+            $table->foreignId('maintenance_id')
+                ->constrained()
+                ->onDelete('cascade');
 
-            $table->dateTime('date_debut');
+            $table->string('technicien');
 
-            $table->dateTime('date_fin')->nullable();
+            $table->date('date_intervention');
 
-            $table->text('rapport');
+            $table->enum('etat', [
+                'planifiee',
+                'en cours',
+                'terminee'
+            ]);
 
             $table->timestamps();
-
         });
     }
 

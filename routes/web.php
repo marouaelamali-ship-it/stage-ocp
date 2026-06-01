@@ -86,11 +86,11 @@ Route::post('/signout', function (Request $request) {
 })->middleware('auth');
 
 
-    /*
-    |--------------------------------------------------------------------------
-    | DASHBOARD
-    |--------------------------------------------------------------------------
-    */
+/*
+|--------------------------------------------------------------------------
+| DASHBOARD
+|--------------------------------------------------------------------------
+*/
 
     Route::middleware('auth')->group(function () {
 
@@ -117,7 +117,11 @@ Route::post('/signout', function (Request $request) {
             
             Route::get('/dashboard', function () {
 
-                $maintenances = \App\Models\Maintenance::latest()->paginate(5);
+                //$maintenances = \App\Models\Maintenance::latest()->paginate(5);
+
+                $maintenances = \App\Models\Maintenance::with('equipment')
+                    ->latest()
+                    ->paginate(5);
 
                 $totalMaintenances = \App\Models\Maintenance::count();
 
@@ -158,6 +162,13 @@ Route::post('/signout', function (Request $request) {
 
                 $monthlyMaintenances = [];
 
+                $topEquipments = \App\Models\Equipment::withCount(
+                    'maintenances'
+                )
+                ->orderByDesc('maintenances_count')
+                ->take(5)
+                ->get();
+
                     for ($month = 1; $month <= 12; $month++) {
 
                         $monthlyMaintenances[] = \App\Models\Maintenance::whereMonth(
@@ -176,7 +187,8 @@ Route::post('/signout', function (Request $request) {
                     'attente',
                     'equipments',
                     'users',
-                    'monthlyMaintenances'
+                    'monthlyMaintenances',
+                    'topEquipments'
                 ));
 
             })->middleware('auth');
@@ -211,6 +223,17 @@ Route::post('/signout', function (Request $request) {
         $equipments = \App\Models\Equipment::all();
 
         return view('maintenance', compact('equipments'));
+
+    });
+
+//liste maintennces
+    Route::get('/mListe', function () {
+
+        $maintenances = \App\Models\Maintenance::with('equipment')
+                        ->latest()
+                        ->paginate(10);
+
+        return view('mListe', compact('maintenances'));
 
     });
 
@@ -458,5 +481,52 @@ Route::put('/equipments/{id}', function (Request $request, $id) {
         ->with('update', 'Équipement modifié');
 
 });
+
+//calendrier
+    Route::get('/calendrier', function () {
+
+        $maintenances = \App\Models\Maintenance::with('equipment')->get();
+
+        return view('calendrier', compact('maintenances'));
+
+    });
+
+//interventions
+    Route::get('/interventions', function () {
+
+        $interventions = \App\Models\Intervention::with('maintenance')
+            ->latest()
+            ->paginate(5);
+
+        $maintenances = \App\Models\Maintenance::all();
+
+        return view(
+            'interventions',
+            compact('interventions', 'maintenances')
+        );
+
+    });
+
+//ajouter interventions
+    Route::post('/interventions', function(Request $request){
+
+        \App\Models\Intervention::create([
+
+            'maintenance_id' => $request->maintenance_id,
+
+            'technicien' => $request->technicien,
+
+            'date_intervention' => $request->date_intervention,
+
+            'etat' => $request->etat
+
+        ]);
+
+        return back()->with(
+            'success',
+            'Intervention ajoutée'
+        );
+
+    });
 
 });

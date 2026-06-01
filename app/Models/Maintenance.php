@@ -17,6 +17,12 @@ class Maintenance extends Model
 
     public function equipment()
     {
-        return $this->belongsTo(Equipment::class);
+        return $this->belongsTo(\App\Models\Equipment::class);
     }
+
+    public function interventions()
+    {
+        return $this->hasMany(Intervention::class);
+    }
+
 }

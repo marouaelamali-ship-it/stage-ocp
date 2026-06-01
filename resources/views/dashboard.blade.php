@@ -1,1015 +1,364 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="fr" class="h-full">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>OCP Admin Dashboard</title>
-
     @vite('resources/css/app.css')
-
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>tailwind.config = { darkMode: 'class' }</script>
 </head>
 
-<body id="body"
-class="font-[Poppins] bg-[#F4F7FA] text-[#071120] transition duration-300">
+<body id="body" class="font-[Poppins] h-full bg-white dark:bg-gray-900 text-gray-900 dark:text-white">
 
 <!-- LOADER -->
-<div id="loader"
-     class="fixed inset-0 bg-white dark-card z-[9999] flex items-center justify-center">
-
-    <div class="w-20 h-20 border-[6px] border-[#00C853] border-t-transparent rounded-full animate-spin"></div>
-
+<div id="loader" class="fixed inset-0 bg-white dark:bg-gray-900 z- flex items-center justify-center">
+    <div class="w-16 h-16 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
 </div>
 
 <!-- TOAST -->
-@if(session('success'))
+@if(session('success')) <script>Swal.fire({icon:'success',title:'Succès',text:'{{ session('success') }}',confirmButtonColor:'#2563eb'})</script> @endif
+@if(session('delete')) <script>Swal.fire({icon:'error',title:'Supprimé',text:'{{ session('delete') }}',confirmButtonColor:'#dc2626'})</script> @endif
+@if(session('update')) <script>Swal.fire({icon:'info',title:'Modification',text:'{{ session('update') }}',confirmButtonColor:'#2563eb'})</script> @endif
 
-<script>
-
-Swal.fire({
-
-    icon: 'success',
-    title: 'Succès',
-    text: '{{ session('success') }}',
-    confirmButtonColor: '#00C853'
-
-})
-
-</script>
-
-@endif
-
-@if(session('delete'))
-
-<script>
-
-Swal.fire({
-
-    icon: 'error',
-    title: 'Supprimé',
-    text: '{{ session('delete') }}',
-    confirmButtonColor: '#FF5252'
-
-})
-
-</script>
-
-@endif
-
-@if(session('update'))
-
-<script>
-
-Swal.fire({
-
-    icon: 'info',
-    title: 'Modification',
-    text: '{{ session('update') }}',
-    confirmButtonColor: '#2196F3'
-
-})
-
-</script>
-
-@endif
-
-<div class="flex h-screen overflow-hidden relative">
+<div class="flex h-screen overflow-hidden">
 
     <!-- SIDEBAR -->
-    <aside id="sidebar"
-        class="fixed lg:relative z-50 lg:z-auto
-        w-[280px] h-screen
-        bg-[#071120] text-white flex flex-col
-        transform -translate-x-full lg:translate-x-0
-        transition-all duration-500 ease-in-out">
-
-        <!-- LOGO -->
-        <div class="h-24 flex items-center px-8 border-b border-white/10">
-
-            <div class="w-14 h-14 rounded-2xl bg-[#00C853] flex items-center justify-center text-2xl font-bold">
-                O
+    <aside id="sidebar" class="fixed lg:static inset-y-0 left-0 z-50 w-64 bg-slate-900 text-white flex-col transform lg:translate-x-0 -translate-x-full transition-transform duration-300">
+        <div class="h-16 flex items-center px-4 border-b border-slate-800">
+            <div class="w-10 h-10 rounded-lg bg-blue-600 flex items-center justify-center text-xl font-bold">O</div>
+            <div class="ml-3">
+                <h1 class="text-lg font-bold">OCP Admin</h1>
+                <p class="text-xs text-slate-400">Maintenance</p>
             </div>
-
-            <div class="ml-4">
-
-                <h1 class="text-2xl font-bold">
-                    OCP Admin
-                </h1>
-
-                <p class="text-sm text-gray-400">
-                    Maintenance System
-                </p>
-
-            </div>
-
         </div>
-
-        <!-- MENU -->
-        <div class="flex-1 py-10 px-6 space-y-4">
-
-            <a href="/dashboard"
-               class="flex items-center gap-4  h-14 px-5 rounded-2xl text-lg font-semibold">
-
-                📊 Dashboard
-
-            </a>
-
-            <a href="/maintenances"
-               class="flex items-center gap-4 hover:bg-white/5 h-14 px-5 rounded-2xl transition">
-
-                🛠️ Maintenances
-
-            </a>
-
-            <a href="/equipments"
-                class="flex items-center gap-4 hover:bg-white/5 h-14 px-5 rounded-2xl transition">
-
-                    🖥️ Equipements
-
-            </a>
-
-        </div>
-
-        <!-- FOOTER -->
-        <div class="p-6 border-t border-white/10">
-
-                <form action="/signout" method="POST">
-                @csrf
-
-                <button
-                    type="submit"
-                    class="hover:scale-105 active:scale-95 duration-200 w-full h-14 rounded-2xl bg-red-500 hover:bg-red-600 transition font-semibold">
-
-                    Déconnexion
-
+        <nav class="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
+            <a href="/dashboard" class="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-blue-600 text-white"><i data-lucide="layout-dashboard" class="w-5 h-5"></i><span class="text-sm font-medium">Dashboard</span></a>
+            <a href="/equipments" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-300 hover:bg-slate-800 hover:text-white transition"><i data-lucide="inbox" class="w-5 h-5"></i><span class="text-sm font-medium">Equipements</span></a>
+            <a href="/maintenances" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-300 hover:bg-slate-800 hover:text-white transition"><i data-lucide="wrench" class="w-5 h-5"></i><span class="text-sm font-medium">Maintenances</span></a>
+            <a href="/calendrier" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-300 hover:bg-slate-800 hover:text-white transition"><i data-lucide="calendar" class="w-5 h-5"></i><span class="text-sm font-medium">Calendrier</span></a>
+            <a href="/interventions" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-300 hover:bg-slate-800 hover:text-white transition"><i data-lucide="clipboard-list" class="w-5 h-5"></i><span class="text-sm font-medium">Interventions</span></a>
+            <a href="/rapport" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-300 hover:bg-slate-800 hover:text-white transition"><i data-lucide="file-text" class="w-5 h-5"></i><span class="text-sm font-medium">Rapports</span></a>
+            <a href="/parametres" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-300 hover:bg-slate-800 hover:text-white transition"><i data-lucide="settings" class="w-5 h-5"></i><span class="text-sm font-medium">Paramètres</span></a>
+        </nav>
+        <div class="p-3 border-t border-slate-800">
+            <form action="/signout" method="POST">@csrf
+                <button type="submit" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg bg-red-600 hover:bg-red-700 text-white text-sm font-medium transition">
+                    <i data-lucide="log-out" class="w-5 h-5"></i> Déconnexion
                 </button>
-
             </form>
-
         </div>
-
     </aside>
 
     <!-- MAIN -->
-    <main class="flex-1 overflow-y-auto">
+    <div class="flex-1 flex-col overflow-hidden">
 
-        <!-- TOPBAR -->
-        <div class="h-24 bg-white dark-card px-6 lg:px-10 flex items-center justify-between border-b border-gray-200">
-
-            <div class="flex items-center">
-
-                <!-- MOBILE BUTTON -->
-                <button
-                    onclick="toggleSidebar()"
-                    class="hover:scale-105 active:scale-95 duration-200 lg:hidden mr-5 bg-[#071120] text-white w-12 h-12 rounded-xl">
-
-                    ☰
-
-                </button>
-
-                <div>
-
-                    <h1 class="text-3xl font-bold text-[#071120]">
-                        Dashboard
-                    </h1>
-
-                    <p class="text-gray-500 mt-1">
-                        {{ auth()->check() ? auth()->user()->role : 'Admin' }}
-                    </p>
-
-                </div>
-
-            </div>
-
-            <!-- RIGHT -->
+        <!-- HEADER -->
+        <header class="h-16 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between px-4 lg:px-6">
             <div class="flex items-center gap-4">
-
-                <!-- DARK MODE -->
-                <button
-                    onclick="toggleDarkMode()"
-                    class="hover:scale-105 active:scale-95 duration-200 bg-[#071120] text-white px-5 h-12 rounded-2xl font-semibold">
-
-                    🌙 Mode
-
-                </button>
-
-                <!-- NOTIFICATION -->
-                <div class="relative group">
-
-    <button
-        class="w-14 h-14 animate-bounce rounded-2xl bg-[#F4F7FA]
-        flex items-center justify-center text-2xl
-        hover:scale-110 transition duration-300">
-
-        🔔
-
-    </button>
-
-    <!-- BADGE -->
-    <div class="absolute -top-1 -right-1
-        w-6 h-6 rounded-full bg-red-500
-        text-white text-xs font-bold
-        flex items-center justify-center">
-
-        {{ $maintenances->where('status', 'Critique')->count() }}
-
-    </div>
-
-    <!-- DROPDOWN -->
-    <div
-        class="absolute right-0 mt-4 w-80 bg-white rounded-3xl shadow-2xl p-5 hidden group-hover:block z-50">
-
-        <h2 class="text-lg font-bold text-[#071120] mb-4">
-            Notifications
-        </h2>
-
-        <div class="space-y-4">
-
-            @foreach($maintenances->take(3) as $maintenance)
-
-            <div class="flex items-start gap-3 border-b pb-3">
-
-                <div class="w-10 h-10 rounded-xl
-                    flex items-center justify-center
-
-                    {{ $maintenance->status == 'Critique'
-                        ? 'bg-red-100 text-red-500'
-                        : 'bg-green-100 text-green-500' }}">
-
-                    {{ $maintenance->status == 'Critique' ? '⚠️' : '✅' }}
-
-                </div>
-
+                <button onclick="toggleSidebar()" class="lg:hidden p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700"><i data-lucide="menu" class="w-5 h-5"></i></button>
                 <div>
-
-                    <p class="font-semibold text-sm text-[#071120]">
-                        Maintenance {{ $maintenance->status }}
+                    <h1 class="text-lg font-semibold">Dashboard</h1>
+                    <p class="text-sm text-gray-500">
+                        Bienvenue {{ auth()->user()->name }}
                     </p>
 
-                    <p class="text-xs text-gray-500">
-                        Equipment {{ $maintenance->equipment_id }}
-                    </p>
 
+                    <p class="hidden lg:block text-sm text-gray-500 dark:text-gray-400">Vue d'ensemble du système de maintenance</p>
                 </div>
-
             </div>
-
-            @endforeach
-
-        </div>
-
-    </div>
-
-</div>
-
-                <!-- SEARCH -->
-                <div class="w-[320px] h-14 bg-[#F4F7FA] rounded-2xl px-5 flex items-center">
-
-                    <input
-                        id="searchInput"
-                        type="text"
-                        placeholder="Rechercher..."
-                        class="bg-transparent outline-none w-full"
-                    >
-
-                </div>
-
+            <div class="flex items-center gap-3">
+                <input id="searchInput" type="text" placeholder="Recher..." class="hidden md:block w-64 px-4 py-2 text-sm border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <button id="darkToggle" class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700"><i data-lucide="moon" class="w-5 h-5 dark:hidden"></i><i data-lucide="sun" class="w-5 h-5 hidden dark:block"></i></button>
+                <img src="https://ui-avatars.com/api/?name=Admin+OCP&background=3b82f6&color=fff" class="w-9 h-9 rounded-full">
             </div>
-
-        </div>
+        </header>
 
         <!-- CONTENT -->
-        <div class="p-5 lg:p-10">
+        <main class="h-screen overflow-y-auto p-4 lg:p-6 bg-white dark:bg-gray-900">            <div class="space-y-6">
 
-            <!-- STATS -->
-            <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-5 gap-8 mb-10">
-
-                <div class="bg-white rounded-3xl p-7 shadow-sm hover:scale-105 hover:shadow-2xl transition duration-300">
-
-                    <p class="text-gray-500 mb-3">
-                        Total Maintenances
-                    </p>
-
-                    <h1 class="text-5xl font-bold text-[#071120]">
-                        {{ $maintenances->count() }}
-                    </h1>
-
-                </div>
-
-                <div class="bg-white dark-card rounded-3xl p-7 shadow-sm hover:scale-105 hover:shadow-2xl transition duration-300">
-
-                    <p class="text-gray-500 mb-3">
-                        Terminées
-                    </p>
-
-                    <h1 class="text-5xl font-bold text-green-500">
-                        {{ $maintenances->where('status', 'Terminée')->count() }}
-                    </h1>
-
-                </div>
-
-                <div class="bg-white dark-card rounded-3xl p-7 shadow-sm hover:scale-105 hover:shadow-2xl transition duration-300">
-
-                    <p class="text-gray-500 mb-3">
-                        En cours
-                    </p>
-
-                    <h1 class="text-5xl font-bold text-yellow-500">
-                        {{ $maintenances->where('status', 'En cours')->count() }}
-                    </h1>
-
-                </div>
-
-                <div class="bg-white dark-card rounded-3xl p-7 shadow-sm hover:scale-105 hover:shadow-2xl transition duration-300">
-
-                    <p class="text-gray-500 mb-3">
-                        Critiques
-                    </p>
-
-                    <h1 class="text-5xl font-bold text-red-500">
-                        {{ $maintenances->where('status', 'Critique')->count() }}
-                    </h1>
-
-                </div>
-
-            </div>
-
-            <!-- CHARTS -->
-            <div class="grid grid-cols-1 xl:grid-cols-2 gap-8 mb-10">
-
-                <!-- CHART -->
-                <div class="bg-white/80 backdrop-blur-xl dark-card
-                    border border-white/20 rounded-3xl p-7 shadow-sm hover:scale-105 hover:shadow-2xl transition duration-300">
-
-                    <h2 class="text-2xl font-bold text-[#071120] mb-6">
-                        Statistiques Maintenances
-                    </h2>
-
-                    <canvas id="maintenanceChart"></canvas>
-
-                </div>
-
-                <!-- TIMELINE -->
-                <div class="bg-white dark-card rounded-3xl p-8 shadow-sm mb-10">
-
-            <div class="flex items-center justify-between mb-8">
-
-                <div>
-
-                    <h2 class="text-2xl font-bold text-[#071120]">
-                        Activité récente
-                    </h2>
-
-                    <p class="text-gray-500 mt-1">
-                        Dernières actions du système
-                    </p>
-
-                </div>
-
-                <div class="w-14 h-14 rounded-2xl bg-[#00C853]/10
-                    flex items-center justify-center text-2xl">
-
-                    ⚡
-
-                </div>
-
-            </div>
-
-            <div class="space-y-6">
-
-                @foreach($maintenances->take(5) as $maintenance)
-
-                <div class="flex items-start gap-5
-                    hover:bg-[#F4F7FA]
-                    transition duration-300
-                    p-4 rounded-2xl">
-
-                    <!-- ICON -->
-                    <div class="min-w-[55px] h-[55px]
-                        rounded-2xl flex items-center justify-center text-2xl
-
-                        {{ $maintenance->status == 'Critique'
-                            ? 'bg-red-100 text-red-500'
-                            : '' }}
-
-                        {{ $maintenance->status == 'En cours'
-                            ? 'bg-yellow-100 text-yellow-500'
-                            : '' }}
-
-                        {{ $maintenance->status == 'Terminée'
-                            ? 'bg-green-100 text-green-500'
-                            : '' }}
-                    ">
-
-                        @if($maintenance->status == 'Critique')
-
-                            🔴
-
-                        @elseif($maintenance->status == 'En cours')
-
-                            🟡
-
-                        @else
-
-                            🟢
-
-                        @endif
-
+                <!-- STATS CARDS -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-4 border-gray-200 dark:border-gray-700">
+                        <div class="flex items-start justify-between">
+                            <div>
+                                <p class="text-sm text-gray-500 dark:text-gray-400">Total Maintenances</p>
+                                <p class="text-2xl font-bold mt-1">{{ $maintenances->count() }}</p>
+                            </div>
+                            <div class="w-10 h-10 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex items-center justify-center"><i data-lucide="wrench" class="w-5 h-5 text-blue-600"></i></div>
+                        </div>
+                    </div>
+                    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-4 border-gray-200 dark:border-gray-700">
+                        <div class="flex items-start justify-between">
+                            <div>
+                                <p class="text-sm text-gray-500 dark:text-gray-400">Terminées</p>
+                                <p class="text-2xl font-bold mt-1 text-green-600">{{ $maintenances->where('status','termine')->count() }}</p>
+                            </div>
+                            <div class="w-10 h-10 bg-green-100 dark:bg-green-900/30 rounded-lg flex items-center justify-center"><i data-lucide="check-circle" class="w-5 h-5 text-green-600"></i></div>
+                        </div>
+                    </div>
+                    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-4 border-gray-200 dark:border-gray-700">
+                        <div class="flex items-start justify-between">
+                            <div>
+                                <p class="text-sm text-gray-500 dark:text-gray-400">En cours</p>
+                                <p class="text-2xl font-bold mt-1 text-yellow-600">{{ $maintenances->where('status','en cours')->count() }}</p>
+                            </div>
+                            <div class="w-10 h-10 bg-yellow-100 dark:bg-yellow-900/30 rounded-lg flex items-center justify-center"><i data-lucide="clock" class="w-5 h-5 text-yellow-600"></i></div>
+                        </div>
+                    </div>
+                    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-4 border-gray-200 dark:border-gray-700">
+                        <div class="flex items-start justify-between">
+                            <div>
+                                <p class="text-sm text-gray-500 dark:text-gray-400">En attente</p>
+                                <p class="text-2xl font-bold mt-1 text-red-600">{{ $maintenances->where('status','en attente')->count() }}</p>
+                            </div>
+                            <div class="w-10 h-10 bg-red-100 dark:bg-red-900/30 rounded-lg flex items-center justify-center"><i data-lucide="alert-triangle" class="w-5 h-5 text-red-600"></i></div>
+                        </div>
                     </div>
 
-            <!-- CONTENT -->
-            <div class="flex-1">
+                    <!-- EQP -->
+                    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-4 border-gray-200 dark:border-gray-700">
+                        <div class="flex items-start justify-between">
+                            <div>
+                                <p class="text-sm text-gray-500 dark:text-gray-400">
+                                    Total Equipements
+                                </p>
+                                <p class="text-2xl font-bold mt-1 text-blue-600">
+                                    {{ $equipments }}
+                                </p>
+                            </div>
 
-                <div class="flex items-center justify-between">
-
-                    <h3 class="font-bold text-[#071120] text-lg">
-
-                        Maintenance {{ $maintenance->status }}
-
-                    </h3>
-
-                    <span class="text-sm text-gray-400">
-
-                        {{ $maintenance->created_at->diffForHumans() }}
-
-                    </span>
-
-                </div>
-
-                <p class="text-gray-500 mt-1">
-
-                    Equipment {{ $maintenance->equipment_id }}
-
-                </p>
-
-                </div>
-
-            </div>
-
-            @endforeach
-
-        </div>
-
-    </div>
-
-                <!-- ACTIVITY -->
-                <div class="bg-[#071120] rounded-3xl p-8 text-white">
-
-                    <h2 class="text-2xl font-bold mb-8">
-                        Activité récente
-                    </h2>
-
-                    <div class="space-y-6">
-
-                        <div class="flex items-center justify-between">
-
-                            <span>Maintenances terminées</span>
-
-                            <span class="text-[#00C853] font-bold">
-                                {{ $maintenances->where('status', 'Terminée')->count() }}
-                            </span>
-
+                            <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                                <i data-lucide="cpu" class="w-5 h-5 text-blue-600"></i>
+                            </div>
                         </div>
+                    </div>
 
-                        <div class="flex items-center justify-between">
+                    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-4 border-gray-200 dark:border-gray-700">
+                        <div class="flex items-start justify-between">
+                            <div>
+                                <p class="text-sm text-gray-500 dark:text-gray-400">
+                                    Utilisateurs
+                                </p>
 
-                            <span>Maintenances en cours</span>
+                                <p class="text-2xl font-bold mt-1 text-purple-600">
+                                    {{ $users }}
+                                </p>
+                            </div>
 
-                            <span class="text-yellow-400 font-bold">
-                                {{ $maintenances->where('status', 'En cours')->count() }}
-                            </span>
-
+                            <div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
+                                <i data-lucide="users" class="w-5 h-5 text-purple-600"></i>
+                            </div>
                         </div>
-
-                        <div class="flex items-center justify-between">
-
-                            <span>Pannes critiques</span>
-
-                            <span class="text-red-400 font-bold">
-                                {{ $maintenances->where('status', 'Critique')->count() }}
-                            </span>
-
-                        </div>
-
                     </div>
 
                 </div>
 
-            </div>
+                @if($attente > 0)
+                <div class="bg-red-100 border border-red-300 text-red-700 px-4 py-3 rounded-lg">
+                    ⚠️ Il y a {{ $attente }} maintenance(s) en attente.
+                </div>
+                @endif
 
-            <!-- TABLE -->
-            <div class="bg-white rounded-3xl shadow-sm p-5 lg:p-8 overflow-x-auto">
+                <!-- CHARTS -->
+                <div class="grid lg:grid-cols-3 gap-4">
+                    <div class="lg:col-span-2 bg-white dark:bg-gray-800 rounded-xl shadow-sm p-4 border-gray-200 dark:border-gray-700">
+                        <h3 class="font-semibold mb-4">Evolution des maintenances (par mois)</h3>
+                        <div class="h-72"><canvas id="lineChart"></canvas></div>
+                    </div>
+                    
+                    <!-- REPARATION PAR STATUT - DONUT -->
 
-                <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-8 gap-5">
-
-                    <div>
-
-                        <h2 class="counter text-2xl font-bold text-[#071120]">
-                            Dernières maintenances
-                        </h2>
-
-                        <p class="text-gray-500 mt-2">
-                            Liste récente des interventions
+                    <div class="mt-4">
+                        <p class="text-sm mb-2">
+                            Taux de maintenance terminée
                         </p>
 
+                        <div class="w-full bg-gray-200 rounded-full h-3">
+
+                            <div
+                                class="bg-green-500 h-3 rounded-full"
+                                style="width: {{ $totalMaintenances > 0 ? ($termines/$totalMaintenances)*100 : 0 }}%">
+                            </div>
+                        </div>
                     </div>
 
-                    <div class="flex gap-4">
-
-                        @if(auth()->check() && auth()->user()->role == 'admin')
-
-                        <a href="/maintenances"
-                        class="h-14 px-8 rounded-2xl bg-[#00C853] hover:bg-[#00b84c] transition text-white font-semibold flex items-center justify-center">
-
-                            + Ajouter
-
-                        </a>
-
-                        @endif
-
-                        <a href="/export-pdf"
-                        class="h-14 px-8 rounded-2xl bg-[#071120] hover:bg-black transition text-white font-semibold flex items-center justify-center">
-
-                            📄 Export PDF
-
-                        </a>
-
+                    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-4 border-gray-200 dark:border-gray-700">
+                        <h3 class="font-semibold mb-4">Réparation par statut</h3>
+                        <div class="h-48 mb-4"><canvas id="donutChart"></canvas></div>
+                        <div class="space-y-2 text-sm">
+                            <div class="flex justify-between">
+                                <div class="flex gap-2"><span class="w-3 h-3 bg-green-500 rounded-full"></span>Terminées</div>
+                                <span class="font-medium">{{ $maintenances->where('status','termine')->count() }}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <div class="flex gap-2"><span class="w-3 h-3 bg-yellow-500 rounded-full"></span>En cours</div>
+                                <span class="font-medium">{{ $maintenances->where('status','en cours')->count() }}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <div class="flex gap-2"><span class="w-3 h-3 bg-red-500 rounded-full"></span>En attente</div>
+                                <span class="font-medium">{{ $maintenances->where('status','en attente')->count() }}</span>
+                            </div>
+                        </div>
                     </div>
+                </div>
+
+                <!-- BOUTONS LFO9 -->
+                <div class="flex flex-wrap gap-2">
+                    <a href="/maintenances" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium flex items-center gap-2 transition">
+                        <i data-lucide="plus" class="w-4 h-4"></i> Ajouter maintenance
+                    </a>
+                    <a href="/equipments" class="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg text-sm font-medium flex items-center gap-2 transition">
+                        <i data-lucide="plus-circle" class="w-4 h-4"></i> Ajouter équipement
+                    </a>
+                    
+                    
+                    <a href="/interventions" class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg text-sm font-medium flex items-center gap-2 transition">
+                        <i data-lucide="alert-circle" class="w-4 h-4"></i>
+                            Intervention urgente
+                    </a>
+
+                    <a href="/export-pdf" class="px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg text-sm font-medium flex items-center gap-2 transition">
+                        <i data-lucide="file-pdf" class="w-4 h-4"></i> Rapport PDF
+                    </a>
+                </div>
+
+            <!-- TOP EQP -->
+                <div class="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm">
+                    <h3 class="font-semibold mb-4">
+                        Top Equipements réparés
+                    </h3>
+
+                    @foreach($topEquipments as $equipment)
+
+                        <div class="flex justify-between border-b py-2">
+
+                            <span>
+                                {{ $equipment->name }}
+                            </span>
+
+                            <span class="font-bold text-blue-600">
+                                {{ $equipment->maintenances_count }}
+                            </span>
+
+                        </div>
+
+                    @endforeach
 
                 </div>
 
-                <table class="w-full text-left min-w-[700px]">
+                <!-- TABLE -->
+                <!--<div class="mt-32 bg-white dark:bg-gray-800 rounded-xl shadow-sm border-gray-200 dark:border-gray-700 overflow-hidden">                    <div class="p-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
+                        <h3 class="font-semibold">Liste des maintenances récentes</h3>
+                        <input id="searchTable" type="text" placeholder="Recher (équipement, ID...)" class="px-3 py-1.5 text-sm border rounded-lg bg-white dark:bg-gray-700 dark:border-gray-600">
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-sm">
+                            <thead class="bg-gray-50 dark:bg-gray-700/50">
+                                <tr>
+                                    <th class="px-4 py-3 text-left font-medium text-gray-600 dark:text-gray-300">ID</th>
+                                    <th class="px-4 py-3 text-left font-medium text-gray-600 dark:text-gray-300">Equipement</th>
+                                    <th class="px-4 py-3 text-left font-medium text-gray-600 dark:text-gray-300">Status</th>
+                                    <th class="px-4 py-3 text-left font-medium text-gray-600 dark:text-gray-300">Date</th>
+                                    <th class="px-4 py-3 text-left font-medium text-gray-600 dark:text-gray-300">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="maintenanceTable" class="divide-y divide-gray-200 dark:divide-gray-700">
+                                @foreach($maintenances as $m)
+                                <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/30">
+                                    <td class="px-4 py-3 font-semibold">#{{ $m->id }}</td>
+                                    <!--<td class="px-4 py-3">Equipment {{ $m->equipment_id }}</td>-->
 
-                    <thead>
+                                    <!--<td class="px-4 py-3">{{ $m->equipment->name ?? 'N/A' }}</td>
 
-                        <tr class="border-b border-gray-100
-                            hover:bg-[#F4F7FA]
-                            dark:hover:bg-[#1F2937]
-                            transition duration-300">
+                                    <td class="px-4 py-3">
+                                        <span class="px-2 py-1 rounded-full text-xs font-medium
+                                            {{ $m->status=='termine'? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' : '' }}
+                                            {{ $m->status=='en cours'? 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400' : '' }}
+                                            {{ $m->status=='en attente'? 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400' : '' }}">
+                                            {{ $m->status }}
+                                        </span>
+                                    </td>
+                                    <td class="px-4 py-3 text-gray-600 dark:text-gray-400">{{ $m->created_at->format('d/m/Y H:i') }}</td>
+                                    <td class="px-4 py-3 flex gap-2">
+                                        <a href="/maintenances/{{ $m->id }}/edit" class="p-1.5 bg-blue-100 text-blue-600 rounded hover:bg-blue-200"><i data-lucide="edit" class="w-4 h-4"></i></a>
+                                        <form action="/maintenances/{{ $m->id }}" method="POST">@csrf @method('DELETE')
+                                            <button class="p-1.5 bg-red-100 text-red-600 rounded hover:bg-red-200"><i data-lucide="trash" class="w-4 h-4"></i></button>
+                                        </form>
+                                    </td>
+                                </tr>
+                                @endforeach
+                            </tbody>
+                        </table-->
+                        <a href="/mListe" class="px-4 py-2 bg-slate-800 hover:bg-slate-900 text-white rounded-lg">
+                            Voir toutes les maintenances
+                        </a>
 
-                            <th class="py-4">ID</th>
-                            <th>Équipement</th>
-                            <th>Status</th>
-                            <th>Date</th>
-                            <th>Actions</th>
-
-                        </tr>
-
-                    </thead>
-
-                    <tbody id="maintenanceTable" class="text-[#071120]">
-
-                        @foreach($maintenances as $maintenance)
-
-                        <tr class="border-b border-gray-100">
-
-                            <td class="py-6 font-semibold">
-                                #{{ $maintenance->id }}
-                            </td>
-
-                            <td>
-                                Equipment {{ $maintenance->equipment_id }}
-                            </td>
-
-                            <td>
-
-                                <span class="px-4 py-2 rounded-xl text-sm font-semibold
-
-                                {{ $maintenance->status == 'Terminée' ? 'bg-green-100 text-green-600' : '' }}
-                                {{ $maintenance->status == 'En cours' ? 'bg-yellow-100 text-yellow-600' : '' }}
-                                {{ $maintenance->status == 'Critique' ? 'bg-red-100 text-red-600' : '' }}
-
-                                ">
-
-                                    {{ $maintenance->status }}
-
-                                </span>
-
-                            </td>
-
-                            <td>
-                                {{ $maintenance->created_at }}
-                            </td>
-
-                            <td class="flex items-center gap-3 py-4">
-
-                                <a href="/maintenances/{{ $maintenance->id }}/edit"
-                                   class="hover:scale-105 active:scale-95 duration-200 bg-blue-500 hover:bg-blue-600 transition text-white px-4 py-2 rounded-xl">
-
-                                    Modifier
-
-                                </a>
-
-                                <form action="/maintenances/{{ $maintenance->id }}" method="POST">
-
-                                    @csrf
-                                    @method('DELETE')
-
-                                    <button
-                                        type="submit"
-                                        class="hover:scale-105 active:scale-95 duration-200 bg-red-500 hover:bg-red-600 transition text-white px-4 py-2 rounded-xl">
-
-                                        Supprimer
-
-                                    </button>
-
-                                </form>
-
-                            </td>
-
-                        </tr>
-
-                        @endforeach
-
-                        <style>
-
-                            .dark-mode {
-                                background: #071120 !important;
-                                color: white !important;
-                            }
-
-                            .dark-mode .dark-card {
-                                background: #111827 !important;
-                                color: white !important;
-                            }
-
-                            .dark-mode table {
-                                color: white !important;
-                            }
-
-                            .dark-mode input {
-                                background: #1F2937 !important;
-                                color: white !important;
-                            }
-
-                            .dark-mode .text-gray-500,
-                            .dark-mode .text-gray-400 {
-                                color: #9CA3AF !important;
-                            }
-
-                            </style>
-
-                            <script>
-
-                                function toggleDarkMode() {
-
-                                    const body = document.getElementById('body');
-
-                                    body.classList.toggle('dark-mode');
-
-                                    localStorage.setItem(
-                                        'darkMode',
-                                        body.classList.contains('dark-mode')
-                                    );
-
-                                }
-
-                                window.onload = () => {
-
-                                    if(localStorage.getItem('darkMode') === 'true') {
-
-                                        document.getElementById('body')
-                                            .classList.add('dark-mode');
-
-                                    }
-
-                                }
-
-                            </script>
-
-                    </tbody>
-
-                </table>
-
-                <div class="mt-8">
-
-                    {{ $maintenances->links() }}
-
+                    </div>
+                    <div class="p-4 border-t">{{ $maintenances->links() }}</div>
                 </div>
 
             </div>
-
-        </div>
-
-    </main>
-
+        </main>
+    </div>
 </div>
 
 <script>
+lucide.createIcons();
+window.addEventListener('load', () => document.getElementById('loader').style.display = 'none');
+function toggleSidebar(){document.getElementById('sidebar').classList.toggle('-translate-x-full')}
 
-const ctx = document.getElementById('maintenanceChart');
+// DARK MODE - blanc by default
+const darkToggle = document.getElementById('darkToggle');
+if(localStorage.theme === 'dark') document.documentElement.classList.add('dark');
+darkToggle?.addEventListener('click', () => {
+    document.documentElement.classList.toggle('dark');
+    localStorage.theme = document.documentElement.classList.contains('dark')? 'dark' : 'light';
+});
 
-new Chart(ctx, {
+// SEARCH
+document.getElementById('searchTable')?.addEventListener('keyup', function(){
+    let val = this.value.toLowerCase();
+    document.querySelectorAll('#maintenanceTable tr').forEach(r => r.style.display = r.innerText.toLowerCase().includes(val)? '' : 'none');
+});
 
-    type: 'doughnut',
-
+// LINE CHART
+new Chart(document.getElementById('lineChart'), {
+    type: 'line',
     data: {
-
-        labels: ['Terminée', 'En cours', 'Critique'],
-
+        labels: ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],
         datasets: [{
-
-            data: [
-                {{ $maintenances->where('status', 'Terminée')->count() }},
-                {{ $maintenances->where('status', 'En cours')->count() }},
-                {{ $maintenances->where('status', 'Critique')->count() }}
-            ],
-
-            backgroundColor: [
-                '#00C853',
-                '#FFC107',
-                '#FF5252'
-            ],
-
-            borderWidth: 0
-
+            label: 'Maintenances',
+            data: @json($monthlyMaintenances),
+            borderColor: '#2563eb',
+            backgroundColor: 'rgba(37,99,235,0.1)',
+            tension: 0.4,
+            fill: true
         }]
-
     },
-
-    options: {
-
-        responsive: true,
-
-        plugins: {
-
-            legend: {
-
-                labels: {
-
-                    color: '#071120',
-
-                    font: {
-                        size: 14
-                    }
-
-                }
-
-            }
-
-        }
-
-    }
-
+    options: {responsive:true, maintainAspectRatio:false}
 });
 
-function toggleSidebar() {
-
-    const sidebar = document.getElementById('sidebar');
-
-    sidebar.classList.toggle('-translate-x-full');
-
-}
-
-function toggleDarkMode() {
-
-    const body = document.getElementById('body');
-
-    body.classList.toggle('bg-[#111827]');
-    body.classList.toggle('bg-[#F4F7FA]');
-
-}
-
-const searchInput = document.getElementById('searchInput');
-
-searchInput.addEventListener('keyup', function() {
-
-    let value = this.value.toLowerCase();
-
-    let rows = document.querySelectorAll('#maintenanceTable tr');
-
-    rows.forEach(row => {
-
-        let rowText = row.innerText.toLowerCase();
-
-        if(rowText.includes(value)) {
-
-            row.style.display = '';
-
-        } else {
-
-            row.style.display = 'none';
-
-        }
-
-    });
-
-});
-
-window.addEventListener('load', () => {
-
-    document.getElementById('loader').style.display = 'none';
-
-});
-
-</script>
-
-<style>
-
-.dark-mode {
-
-    background:
-    linear-gradient(
-        135deg,
-        #071120,
-        #0F172A,
-        #111827
-    ) !important;
-
-    background-size: 400% 400%;
-
-    animation: gradientMove 10s ease infinite;
-
-}
-
-@keyframes gradientMove {
-
-    0% {
-        background-position: 0% 50%;
-    }
-
-    50% {
-        background-position: 100% 50%;
-    }
-
-    100% {
-        background-position: 0% 50%;
-    }
-
-}
-
-</style>
-
-<script>
-
-const counters = document.querySelectorAll('.counter');
-
-counters.forEach(counter => {
-
-    let start = 0;
-
-    const end = +counter.innerText;
-
-    const speed = 40;
-
-    const updateCounter = () => {
-
-        start++;
-
-        counter.innerText = start;
-
-        if(start < end) {
-
-            setTimeout(updateCounter, speed);
-
-        }
-
-    }
-
-    updateCounter();
-
-});
-
-</script>
-
-<style>
-
-main {
-
-    animation: fadePage .7s ease;
-
-}
-
-@keyframes fadePage {
-
-    from {
-
-        opacity: 0;
-        transform: translateY(20px);
-
-    }
-
-    to {
-
-        opacity: 1;
-        transform: translateY(0);
-
-    }
-
-}
-
-</style>
-
-    <!--<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-
-            const ctx = document.getElementById('maintenanceChart');
-
-            new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: [
-                        'Terminées',
-                        'En cours',
-                        'En attente'
-                    ],
-                    datasets: [{
-                        data: [
-                            {{ $termines }},
-                            {{ $encours }},
-                            {{ $attente }}
-                        ],
-                        backgroundColor: [
-                            '#1E293B',
-                            '#475569',
-                            '#94A3B8'
-                        ],
-                        borderRadius: 10
-                    }]
-                },
-                options: {
-                    plugins: {
-                        legend: {
-                            display: false
-                        }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            ticks: {
-                                stepSize: 1
-                            }
-                        }
-                    }
-                }
-            });
-
-        });
-    </script>-->
-
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-<script>
-document.addEventListener('DOMContentLoaded', function () {
-
-    const ctx = document.getElementById('maintenanceChart');
-
-    new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: [
-                'Jan',
-                'Feb',
-                'Mar',
-                'Apr',
-                'May',
-                'Jun',
-                'Jul',
-                'Aug',
-                'Sep',
-                'Oct',
-                'Nov',
-                'Dec'
+// DONUT CHART - REPARATION PAR STATUT
+new Chart(document.getElementById('donutChart'), {
+    type: 'doughnut',
+    data: {
+        labels: ['Terminées','En cours','En attente'],
+        datasets: [{
+            data: [
+                {{ $maintenances->where('status','termine')->count() }},
+                {{ $maintenances->where('status','en cours')->count() }},
+                {{ $maintenances->where('status','en attente')->count() }}
             ],
-            datasets: [{
-                label: 'Maintenances',
-                data: @json($monthlyMaintenances),
-                tension: 0.4,
-                fill: false,
-                borderColor: '#071120',
-                borderWidth: 3,
-                pointRadius: 5,
-                pointHoverRadius: 7
-            }]
-        },
-        options: {
-            responsive: true,
-            plugins: {
-                legend: {
-                    display: true
-                }
-            },
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    ticks: {
-                        stepSize: 1
-                    }
-                }
-            }
-        }
-    });
-
+            backgroundColor: ['#10b981','#f59e0b','#ef4444'],
+            borderWidth: 0
+        }]
+    },
+    options: {responsive:true, maintainAspectRatio:false, plugins:{legend:{position:'right'}}}
 });
 </script>
-
-
-
 </body>
 </html>
