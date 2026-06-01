@@ -3,530 +3,211 @@
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-
 use App\Models\Maintenance;
-use App\Http\Controllers\MaitenanceController;
-
 use App\Models\Equipment;
-use App\Http\Controllers\Api\EquipmentController;
-
-use App\Http\Controllers\Api\AuthController;
-
 use Barryvdh\DomPDF\Facade\Pdf;
 
 /*
 |--------------------------------------------------------------------------
-| HOME
+| HOME + LOGIN
 |--------------------------------------------------------------------------
 */
-
-Route::get('/', function () {
-
-    return redirect('/login');
-
-});
-
-/*
-|--------------------------------------------------------------------------
-| LOGIN PAGE
-|--------------------------------------------------------------------------
-*/
-
-Route::get('/login', function () {
-
-    return view('auth.login');
-
-})->name('login');
-
-/*
-|--------------------------------------------------------------------------
-| LOGIN ACTION
-|--------------------------------------------------------------------------
-*/
+Route::get('/', fn() => redirect('/login'));
+Route::get('/login', fn() => view('auth.login'))->name('login');
 
 Route::post('/login', function (Request $request) {
-
     $credentials = $request->validate([
-
         'email' => ['required', 'email'],
         'password' => ['required'],
-
     ]);
-
     if (Auth::attempt($credentials)) {
-
         $request->session()->regenerate();
-
         return redirect('/dashboard');
-
     }
-
-    return back()->withErrors([
-        'email' => 'Email ou mot de passe incorrect',
-    ]);
-
+    return back()->withErrors(['email' => 'Email ou mot de passe incorrect']);
 });
 
-/*
-|--------------------------------------------------------------------------
-| LOGOUT
-|--------------------------------------------------------------------------
-*/
-
 Route::post('/signout', function (Request $request) {
-
     Auth::logout();
-
     $request->session()->invalidate();
-
     $request->session()->regenerateToken();
-
     return redirect('/login');
-
 })->middleware('auth');
-
 
 /*
 |--------------------------------------------------------------------------
 | DASHBOARD
 |--------------------------------------------------------------------------
 */
+Route::middleware('auth')->group(function () {
 
-    Route::middleware('auth')->group(function () {
+    Route::get('/dashboard', function () {
+        $maintenances = Maintenance::with('equipment')->latest()->paginate(5);
+        $totalMaintenances = Maintenance::count();
+        $termines = Maintenance::where('status', 'termine')->count();
+        $encours = Maintenance::where('status', 'en cours')->count();
+        $attente = Maintenance::where('status', 'en attente')->count();
+        $equipments = Equipment::count();
+        $users = \App\Models\User::count();
 
-        /* Route::get('/dashboard', function () {
+        $monthlyMaintenances = [];
+        for ($month = 1; $month <= 12; $month++) {
+            $monthlyMaintenances[] = Maintenance::whereMonth('created_at', $month)->count();
+        }
 
-            $maintenances = Maintenance::latest()->paginate(5);
+        $topEquipments = Equipment::withCount('maintenances')
+            ->orderByDesc('maintenances_count')
+            ->take(5)
+            ->get();
 
-            $totalMaintenances = Maintenance::count();
+        return view('dashboard', compact(
+            'maintenances','totalMaintenances','termines','encours','attente',
+            'equipments','users','monthlyMaintenances','topEquipments'
+        ));
+    });
 
-            $termines = Maintenance::where('status', 'Terminée')->count();
+    /*
+    |--------------------------------------------------------------------------
+    | EQUIPMENTS - 2 PAGES M9ADIN
+    |--------------------------------------------------------------------------
+    */
+    
+    // 1. PAGE AJOUTER - equipements.blade.php
+    Route::get('/equipments', function () {
+        $totalEquipments = Equipment::count();
+        $disponibles = Equipment::where('status', 'Disponible')->count();
+        $maintenance = Equipment::where('status', 'Maintenance')->count();
+        $critiques = Equipment::where('status', 'Critique')->count();
 
-            $encours = Maintenance::where('status', 'En cours')->count();
+        return view('equipments', compact('totalEquipments','disponibles','maintenance','critiques'));
+    });
 
-            $critiques = Maintenance::where('status', 'Critique')->count();
+    // 2. PAGE LISTE + STATS - eListe.blade.php  
+    Route::get('/eListe', function () {
+        $equipments = Equipment::latest()->paginate(10);
+        $totalEquipments = Equipment::count();
+        $disponibles = Equipment::where('status', 'Disponible')->count();
+        $maintenance = Equipment::where('status', 'Maintenance')->count();
+        $critiques = Equipment::where('status', 'Critique')->count();
 
-            return view('dashboard', compact(
-                'maintenances',
-                'totalMaintenances',
-                'termines',
-                'encours',
-                'critiques'
-            ));
-            */
-            
-            Route::get('/dashboard', function () {
+        return view('eListe', compact('equipments','totalEquipments','disponibles','maintenance','critiques'));
+    })->name('equipments.index');
 
-                //$maintenances = \App\Models\Maintenance::latest()->paginate(5);
-
-                $maintenances = \App\Models\Maintenance::with('equipment')
-                    ->latest()
-                    ->paginate(5);
-
-                $totalMaintenances = \App\Models\Maintenance::count();
-
-                /*$termines = \App\Models\Maintenance::where(
-                    'status',
-                    'Terminée'
-                )->count();
-
-                $encours = \App\Models\Maintenance::where(
-                    'status',
-                    'En cours'
-                )->count();
-
-                $critiques = \App\Models\Maintenance::where(
-                    'status',
-                    'Critique'
-                )->count();*/
-
-                $termines = \App\Models\Maintenance::where(
-                    'status',
-                    'termine'
-                )->count();
-
-                $encours = \App\Models\Maintenance::where(
-                    'status',
-                    'en cours'
-                )->count();
-
-                $attente = \App\Models\Maintenance::where(
-                    'status',
-                    'en attente'
-                )->count();
-
-
-                $equipments = \App\Models\Equipment::count();
-
-                $users = \App\Models\User::count();
-
-                $monthlyMaintenances = [];
-
-                $topEquipments = \App\Models\Equipment::withCount(
-                    'maintenances'
-                )
-                ->orderByDesc('maintenances_count')
-                ->take(5)
-                ->get();
-
-                    for ($month = 1; $month <= 12; $month++) {
-
-                        $monthlyMaintenances[] = \App\Models\Maintenance::whereMonth(
-                            'created_at',
-                            $month
-                        )->count();
-
-                    }
+    // 3. STORE EQUIPMENT
+    Route::post('/equipments', function (Request $request) {
+        if(auth()->user()->role != 'admin') abort(403);
         
+        $imageName = null;
+        if($request->hasFile('image')) {
+            $imageName = time().'.'.$request->image->extension();
+            $request->image->move(public_path('uploads'), $imageName);
+        }
 
-                return view('dashboard', compact(
-                    'maintenances',
-                    'totalMaintenances',
-                    'termines',
-                    'encours',
-                    'attente',
-                    'equipments',
-                    'users',
-                    'monthlyMaintenances',
-                    'topEquipments'
-                ));
+        Equipment::create([
+            'name' => $request->name,
+            'type' => $request->type,
+            'status' => $request->status,
+            'reference' => $request->reference,
+            'image' => $imageName,
+        ]);
 
-            })->middleware('auth');
+        return redirect('/equipments')->with('success', 'Equipement ajouté');
+    });
 
-            
+    // 4. DELETE EQUIPMENT
+    Route::delete('/equipments/{id}', function ($id) {
+        if(auth()->user()->role != 'admin') abort(403);
+        Equipment::findOrFail($id)->delete();
+        return back()->with('delete', 'Équipement supprimé');
+    });
 
-
-    /*
-    |--------------------------------------------------------------------------
-    | EXPORT PDF
-    |--------------------------------------------------------------------------
-    */
-
-    Route::get('/export-pdf', function () {
-
-        $maintenances = Maintenance::all();
-
-        $pdf = Pdf::loadView('pdf.maintenances', compact('maintenances'));
-
-        return $pdf->download('maintenances.pdf');
-
+    // 5. UPDATE EQUIPMENT
+    Route::put('/equipments/{id}', function (Request $request, $id) {
+        if(auth()->user()->role != 'admin') abort(403);
+        $equipment = Equipment::findOrFail($id);
+        $equipment->update([
+            'name' => $request->name,
+            'type' => $request->type,
+            'status' => $request->status,
+        ]);
+        return redirect('/eListe')->with('update', 'Équipement modifié');
     });
 
     /*
     |--------------------------------------------------------------------------
-    | PAGE AJOUT MAINTENANCE
+    | MAINTENANCES - B7AL MA HOM
     |--------------------------------------------------------------------------
     */
-
     Route::get('/maintenances', function () {
-
-        $equipments = \App\Models\Equipment::all();
-
+        $equipments = Equipment::all();
         return view('maintenance', compact('equipments'));
-
     });
 
-//liste maintennces
     Route::get('/mListe', function () {
-
-        $maintenances = \App\Models\Maintenance::with('equipment')
-                        ->latest()
-                        ->paginate(10);
-
+        $maintenances = Maintenance::with('equipment')->latest()->paginate(10);
         return view('mListe', compact('maintenances'));
-
     });
-
-    /*
-    |--------------------------------------------------------------------------
-    | AJOUTER MAINTENANCE
-    |--------------------------------------------------------------------------
-    */
 
     Route::post('/maintenances', function (Request $request) {
-
         if(auth()->user()->role != 'admin') abort(403);
-
         Maintenance::create([
-
             'equipment_id' => $request->equipment_id,
             'type' => 'corrective',
             'description' => $request->description,
             'status' => $request->status,
-
         ]);
-
         return redirect('/dashboard')->with('success', 'Maintenance ajoutée');
-
     });
-
-    /*
-    |--------------------------------------------------------------------------
-    | DELETE MAINTENANCE
-    |--------------------------------------------------------------------------
-    */
 
     Route::delete('/maintenances/{id}', function ($id) {
-
         if(auth()->user()->role != 'admin') abort(403);
-
         Maintenance::findOrFail($id)->delete();
-
         return redirect('/dashboard')->with('delete', 'Maintenance supprimée');
-
     });
-
-    /*
-    |--------------------------------------------------------------------------
-    | PAGE EDIT
-    |--------------------------------------------------------------------------
-    */
 
     Route::get('/maintenances/{id}/edit', function ($id) {
-
         if(auth()->user()->role != 'admin') abort(403);
-
         $maintenance = Maintenance::findOrFail($id);
-
         $equipments = Equipment::all();
-
-        return view(
-            'edit-maintenance',
-            compact('maintenance', 'equipments')
-        );
-
+        return view('edit-maintenance', compact('maintenance', 'equipments'));
     });
 
-    /*
-    |--------------------------------------------------------------------------
-    | UPDATE MAINTENANCE
-    |--------------------------------------------------------------------------
-    */
-
     Route::put('/maintenances/{id}', function (Request $request, $id) {
-
-    if(auth()->user()->role != 'admin') abort(403);
-
-    $maintenance = Maintenance::findOrFail($id);
-
+        if(auth()->user()->role != 'admin') abort(403);
+        $maintenance = Maintenance::findOrFail($id);
         $maintenance->update([
             'equipment_id' => $request->equipment_id,
             'description' => $request->description,
             'status' => $request->status,
         ]);
-
         return redirect('/dashboard')->with('success', 'Maintenance mise à jour');
-
     });
 
-    Route::middleware('auth:sanctum')->group(function () {
-
-    Route::post('/logout', [AuthController::class, 'logout']);
-
-    Route::get('/equipments', [EquipmentController::class, 'index']);
-    Route::post('/equipments', [EquipmentController::class, 'store']);
-
-    Route::get('/search-maintenances', function (Request $request) {
-
-        $search = $request->search;
-
-        $maintenances = \App\Models\Maintenance::where(
-            'status',
-            'LIKE',
-            "%$search%"
-        )->get();
-
-        return response()->json($maintenances);
-
+    Route::get('/export-pdf', function () {
+        $maintenances = Maintenance::all();
+        $pdf = Pdf::loadView('pdf.maintenances', compact('maintenances'));
+        return $pdf->download('maintenances.pdf');
     });
-});
 
-/*
-|--------------------------------------------------------------------------
-| EQUIPMENTS PAGE
-|--------------------------------------------------------------------------
-*/
-
-Route::get('/equipments', function () {
-
-    $equipments = Equipment::latest()->get();
-
-    return view('equipments', compact('equipments'));
-
-});
-
-/*
-|--------------------------------------------------------------------------
-| ADD EQUIPMENT
-|--------------------------------------------------------------------------
-*/
-
-Route::post('/equipments', function (Request $request) {
-
-    if(auth()->user()->role != 'admin') abort(403);
-
-    $imageName = null;
-
-    if($request->hasFile('image')) {
-
-        $imageName = time().'.'.$request->image->extension();
-
-        $request->image->move(
-            public_path('uploads'),
-            $imageName
-        );
-    }
-
-    Equipment::create([
-
-        'name' => $request->name,
-        'reference' => $request->reference,
-        'status' => $request->status,
-        'image' => $imageName,
-
-    ]);
-
-    return back()->with(
-        'success',
-        'Equipement ajouté'
-    );
-
-});
-
-/*
-|--------------------------------------------------------------------------
-| DELETE EQUIPMENT
-|--------------------------------------------------------------------------
-*/
-
-Route::delete('/equipments/{id}', function ($id) {
-
-    if(auth()->user()->role != 'admin') abort(403);
-
-    Equipment::findOrFail($id)->delete();
-
-    return back()->with('delete', 'Équipement supprimé');
-
-});
-
-Route::get('/equipments', function () {
-
-    return view('equipments');
-
-});
-
-/*
-|--------------------------------------------------------------------------
-| EQUIPMENTS
-|--------------------------------------------------------------------------
-*/
-
-Route::get('/equipments', function () {
-
-    $equipments = Equipment::latest()->paginate(5);
-
-    $totalEquipments = Equipment::count();
-
-    $disponibles = Equipment::where('status', 'Disponible')->count();
-
-    $maintenance = Equipment::where('status', 'Maintenance')->count();
-
-    $critiques = Equipment::where('status', 'Critique')->count();
-
-    return view('equipments', compact(
-        'equipments',
-        'totalEquipments',
-        'disponibles',
-        'maintenance',
-        'critiques'
-    ));
-
-});
-
-
-Route::delete('/equipments/{id}', function ($id) {
-
-    if(auth()->user()->role != 'admin') abort(403);
-
-    Equipment::findOrFail($id)->delete();
-
-    return redirect('/equipments')
-        ->with('delete', 'Équipement supprimé');
-
-});
-
-Route::get('/equipments/{id}/edit', function ($id) {
-
-    $equipment = Equipment::findOrFail($id);
-
-    return view('edit-equipment', compact('equipment'));
-
-});
-
-Route::put('/equipments/{id}', function (Request $request, $id) {
-
-    if(auth()->user()->role != 'admin') abort(403);
-
-    $equipment = Equipment::findOrFail($id);
-
-    $equipment->update([
-
-        'name' => $request->name,
-        'type' => $request->type,
-        'status' => $request->status,
-
-    ]);
-
-    return redirect('/equipments')
-        ->with('update', 'Équipement modifié');
-
-});
-
-//calendrier
     Route::get('/calendrier', function () {
-
-        $maintenances = \App\Models\Maintenance::with('equipment')->get();
-
+        $maintenances = Maintenance::with('equipment')->get();
         return view('calendrier', compact('maintenances'));
-
     });
 
-//interventions
     Route::get('/interventions', function () {
-
-        $interventions = \App\Models\Intervention::with('maintenance')
-            ->latest()
-            ->paginate(5);
-
-        $maintenances = \App\Models\Maintenance::all();
-
-        return view(
-            'interventions',
-            compact('interventions', 'maintenances')
-        );
-
+        $interventions = \App\Models\Intervention::with('maintenance')->latest()->paginate(5);
+        $maintenances = Maintenance::all();
+        return view('interventions', compact('interventions', 'maintenances'));
     });
 
-//ajouter interventions
     Route::post('/interventions', function(Request $request){
-
         \App\Models\Intervention::create([
-
             'maintenance_id' => $request->maintenance_id,
-
             'technicien' => $request->technicien,
-
             'date_intervention' => $request->date_intervention,
-
             'etat' => $request->etat
-
         ]);
-
-        return back()->with(
-            'success',
-            'Intervention ajoutée'
-        );
-
+        return back()->with('success', 'Intervention ajoutée');
     });
 
 });

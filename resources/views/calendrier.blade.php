@@ -37,7 +37,11 @@
                     Dashboard
                 </a>
                 <a href="/mListe" class="bg-green-600 hover:bg-green-700 px-4 py-3 rounded-xl font-medium transition">
-                    Liste
+                    Liste Maintenances
+                </a>
+
+                <a href="/eListe" class="bg-green-600 hover:bg-green-700 px-4 py-3 rounded-xl font-medium transition">
+                    Liste Equipements
                 </a>
             </div>
         </div>

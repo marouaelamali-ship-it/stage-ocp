@@ -37,8 +37,19 @@
         </div>
         <nav class="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
             <a href="/dashboard" class="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-blue-600 text-white"><i data-lucide="layout-dashboard" class="w-5 h-5"></i><span class="text-sm font-medium">Dashboard</span></a>
-            <a href="/equipments" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-300 hover:bg-slate-800 hover:text-white transition"><i data-lucide="inbox" class="w-5 h-5"></i><span class="text-sm font-medium">Equipements</span></a>
-            <a href="/maintenances" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-300 hover:bg-slate-800 hover:text-white transition"><i data-lucide="wrench" class="w-5 h-5"></i><span class="text-sm font-medium">Maintenances</span></a>
+
+
+            <a href="/eListe" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-300 hover:bg-slate-800 hover:text-white transition">
+                <i data-lucide="inbox" class="w-5 h-5"></i>
+                <span class="text-sm font-medium">Equipements</span>
+            </a>
+            
+            <a href="/mListe" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-300 hover:bg-slate-800 hover:text-white transition">
+                <i data-lucide="wrench" class="w-5 h-5"></i>
+                <span class="text-sm font-medium">Maintenances</span>
+
+            </a>
+
             <a href="/calendrier" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-300 hover:bg-slate-800 hover:text-white transition"><i data-lucide="calendar" class="w-5 h-5"></i><span class="text-sm font-medium">Calendrier</span></a>
             <a href="/interventions" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-300 hover:bg-slate-800 hover:text-white transition"><i data-lucide="clipboard-list" class="w-5 h-5"></i><span class="text-sm font-medium">Interventions</span></a>
             <a href="/rapport" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-300 hover:bg-slate-800 hover:text-white transition"><i data-lucide="file-text" class="w-5 h-5"></i><span class="text-sm font-medium">Rapports</span></a>
@@ -79,6 +90,37 @@
 
         <!-- CONTENT -->
         <main class="h-screen overflow-y-auto p-4 lg:p-6 bg-white dark:bg-gray-900">            <div class="space-y-6">
+            
+                <div class="grid grid-cols-2 gap-4 mb-6">
+    
+    <!-- JIH LISSAR: ALERT -->
+    <div>
+        @if($attente > 0)
+        <div class="bg-red-100 border-red-300 text-red-700 px-4 py-3 rounded-lg h-full flex items-center">
+            ⚠️ Il y a {{ $attente }} maintenance(s) en attente.
+        </div>
+        @else
+        <div class="bg-green-100 border-green-300 text-green-700 px-4 py-3 rounded-lg h-full flex items-center">
+            ✅ Aucune maintenance en attente
+        </div>
+        @endif
+    </div>
+
+    <!-- JIH LYMEN: PROGRESS BAR -->
+    <div class="bg-slate-800 rounded-lg p-4">
+        <p class="text-sm text-slate-300 mb-2">Taux de maintenance terminée</p>
+        <div class="w-full bg-gray-700 rounded-full h-3">
+            <div
+                class="bg-green-500 h-3 rounded-full transition-all duration-500"
+                style="width: {{ $totalMaintenances > 0 ? ($termines/$totalMaintenances)*100 : 0 }}%">
+            </div>
+        </div>
+        <p class="text-xs text-slate-400 mt-1">
+            {{ $totalMaintenances > 0 ? round(($termines/$totalMaintenances)*100, 1) : 0 }}%
+        </p>
+    </div>
+
+</div>
 
                 <!-- STATS CARDS -->
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -118,6 +160,7 @@
                             <div class="w-10 h-10 bg-red-100 dark:bg-red-900/30 rounded-lg flex items-center justify-center"><i data-lucide="alert-triangle" class="w-5 h-5 text-red-600"></i></div>
                         </div>
                     </div>
+                    
 
                     <!-- EQP -->
                     <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-4 border-gray-200 dark:border-gray-700">
@@ -153,15 +196,33 @@
                                 <i data-lucide="users" class="w-5 h-5 text-purple-600"></i>
                             </div>
                         </div>
+                        
                     </div>
 
+                    <div class="mt-4"> </div>
+
                 </div>
 
-                @if($attente > 0)
-                <div class="bg-red-100 border border-red-300 text-red-700 px-4 py-3 rounded-lg">
-                    ⚠️ Il y a {{ $attente }} maintenance(s) en attente.
+                
+
+
+                <!-- BOUTONS LFO9 -->
+                <div class="flex flex-wrap gap-2">
+                    <a href="/maintenances" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium flex items-center gap-2 transition">
+                        <i data-lucide="plus" class="w-4 h-4"></i> Ajouter maintenance
+                    </a>
+                    <a href="/equipments" class="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg text-sm font-medium flex items-center gap-2 transition">
+                        <i data-lucide="plus-circle" class="w-4 h-4"></i> Ajouter équipement
+                    </a>
+                    
+                    
+                    <a href="/interventions" class="px-10 py-10 bg-red-600 hover:bg-red-700 text-white rounded-lg text-sm font-medium flex items-center gap-2 transition">
+                        <i data-lucide="alert-circle" class="w-4 h-4"></i>
+                            Intervention urgente
+                    </a>
                 </div>
-                @endif
+
+
 
                 <!-- CHARTS -->
                 <div class="grid lg:grid-cols-3 gap-4">
@@ -172,7 +233,7 @@
                     
                     <!-- REPARATION PAR STATUT - DONUT -->
 
-                    <div class="mt-4">
+                    <!--<div class="mt-4">
                         <p class="text-sm mb-2">
                             Taux de maintenance terminée
                         </p>
@@ -184,7 +245,7 @@
                                 style="width: {{ $totalMaintenances > 0 ? ($termines/$totalMaintenances)*100 : 0 }}%">
                             </div>
                         </div>
-                    </div>
+                    </div>-->
 
                     <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-4 border-gray-200 dark:border-gray-700">
                         <h3 class="font-semibold mb-4">Réparation par statut</h3>
@@ -204,50 +265,6 @@
                             </div>
                         </div>
                     </div>
-                </div>
-
-                <!-- BOUTONS LFO9 -->
-                <div class="flex flex-wrap gap-2">
-                    <a href="/maintenances" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium flex items-center gap-2 transition">
-                        <i data-lucide="plus" class="w-4 h-4"></i> Ajouter maintenance
-                    </a>
-                    <a href="/equipments" class="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg text-sm font-medium flex items-center gap-2 transition">
-                        <i data-lucide="plus-circle" class="w-4 h-4"></i> Ajouter équipement
-                    </a>
-                    
-                    
-                    <a href="/interventions" class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg text-sm font-medium flex items-center gap-2 transition">
-                        <i data-lucide="alert-circle" class="w-4 h-4"></i>
-                            Intervention urgente
-                    </a>
-
-                    <a href="/export-pdf" class="px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg text-sm font-medium flex items-center gap-2 transition">
-                        <i data-lucide="file-pdf" class="w-4 h-4"></i> Rapport PDF
-                    </a>
-                </div>
-
-            <!-- TOP EQP -->
-                <div class="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm">
-                    <h3 class="font-semibold mb-4">
-                        Top Equipements réparés
-                    </h3>
-
-                    @foreach($topEquipments as $equipment)
-
-                        <div class="flex justify-between border-b py-2">
-
-                            <span>
-                                {{ $equipment->name }}
-                            </span>
-
-                            <span class="font-bold text-blue-600">
-                                {{ $equipment->maintenances_count }}
-                            </span>
-
-                        </div>
-
-                    @endforeach
-
                 </div>
 
                 <!-- TABLE -->
@@ -293,12 +310,8 @@
                                 @endforeach
                             </tbody>
                         </table-->
-                        <a href="/mListe" class="px-4 py-2 bg-slate-800 hover:bg-slate-900 text-white rounded-lg">
-                            Voir toutes les maintenances
-                        </a>
 
                     </div>
-                    <div class="p-4 border-t">{{ $maintenances->links() }}</div>
                 </div>
 
             </div>
