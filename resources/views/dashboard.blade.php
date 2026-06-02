@@ -92,6 +92,8 @@
         <main class="h-screen overflow-y-auto p-4 lg:p-6 bg-white dark:bg-gray-900">            <div class="space-y-6">
             
                 <div class="grid grid-cols-2 gap-4 mb-6">
+
+                
     
     <!-- JIH LISSAR: ALERT -->
     <div>
@@ -106,17 +108,19 @@
         @endif
     </div>
 
+    
+
     <!-- JIH LYMEN: PROGRESS BAR -->
     <div class="bg-slate-800 rounded-lg p-4">
         <p class="text-sm text-slate-300 mb-2">Taux de maintenance terminée</p>
         <div class="w-full bg-gray-700 rounded-full h-3">
             <div
                 class="bg-green-500 h-3 rounded-full transition-all duration-500"
-                style="width: {{ $totalMaintenances > 0 ? ($termines/$totalMaintenances)*100 : 0 }}%">
+                style="width: {{ $totalMaintenances > 0 ? ($terminees/$totalMaintenances)*100 : 0 }}%">
             </div>
         </div>
         <p class="text-xs text-slate-400 mt-1">
-            {{ $totalMaintenances > 0 ? round(($termines/$totalMaintenances)*100, 1) : 0 }}%
+            {{ $totalMaintenances > 0 ? round(($terminees/$totalMaintenances)*100, 1) : 0 }}%
         </p>
     </div>
 
@@ -128,7 +132,7 @@
                         <div class="flex items-start justify-between">
                             <div>
                                 <p class="text-sm text-gray-500 dark:text-gray-400">Total Maintenances</p>
-                                <p class="text-2xl font-bold mt-1">{{ $maintenances->count() }}</p>
+                                <p class="text-2xl font-bold mt-1">{{ $totalMaintenances }}</p>
                             </div>
                             <div class="w-10 h-10 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex items-center justify-center"><i data-lucide="wrench" class="w-5 h-5 text-blue-600"></i></div>
                         </div>
@@ -137,8 +141,7 @@
                         <div class="flex items-start justify-between">
                             <div>
                                 <p class="text-sm text-gray-500 dark:text-gray-400">Terminées</p>
-                                <p class="text-2xl font-bold mt-1 text-green-600">{{ $maintenances->where('status','termine')->count() }}</p>
-                            </div>
+<p class="text-2xl font-bold mt-1 text-green-600">{{ $terminees }}</p>                            </div>
                             <div class="w-10 h-10 bg-green-100 dark:bg-green-900/30 rounded-lg flex items-center justify-center"><i data-lucide="check-circle" class="w-5 h-5 text-green-600"></i></div>
                         </div>
                     </div>
@@ -146,7 +149,7 @@
                         <div class="flex items-start justify-between">
                             <div>
                                 <p class="text-sm text-gray-500 dark:text-gray-400">En cours</p>
-                                <p class="text-2xl font-bold mt-1 text-yellow-600">{{ $maintenances->where('status','en cours')->count() }}</p>
+                                <p class="text-2xl font-bold mt-1 text-yellow-600">{{ $encours           }}</p>
                             </div>
                             <div class="w-10 h-10 bg-yellow-100 dark:bg-yellow-900/30 rounded-lg flex items-center justify-center"><i data-lucide="clock" class="w-5 h-5 text-yellow-600"></i></div>
                         </div>
@@ -155,11 +158,11 @@
                         <div class="flex items-start justify-between">
                             <div>
                                 <p class="text-sm text-gray-500 dark:text-gray-400">En attente</p>
-                                <p class="text-2xl font-bold mt-1 text-red-600">{{ $maintenances->where('status','en attente')->count() }}</p>
+                                <p class="text-2xl font-bold mt-1 text-red-600">{{ $attente }}</p>
                             </div>
                             <div class="w-10 h-10 bg-red-100 dark:bg-red-900/30 rounded-lg flex items-center justify-center"><i data-lucide="alert-triangle" class="w-5 h-5 text-red-600"></i></div>
                         </div>
-                    </div>
+                    </div>  
                     
 
                     <!-- EQP -->
@@ -242,30 +245,53 @@
 
                             <div
                                 class="bg-green-500 h-3 rounded-full"
-                                style="width: {{ $totalMaintenances > 0 ? ($termines/$totalMaintenances)*100 : 0 }}%">
+                                style="width: {{ $totalMaintenances > 0 ? ($terminees/$totalMaintenances)*100 : 0 }}%">
                             </div>
                         </div>
                     </div>-->
 
                     <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-4 border-gray-200 dark:border-gray-700">
-                        <h3 class="font-semibold mb-4">Réparation par statut</h3>
-                        <div class="h-48 mb-4"><canvas id="donutChart"></canvas></div>
-                        <div class="space-y-2 text-sm">
-                            <div class="flex justify-between">
-                                <div class="flex gap-2"><span class="w-3 h-3 bg-green-500 rounded-full"></span>Terminées</div>
-                                <span class="font-medium">{{ $maintenances->where('status','termine')->count() }}</span>
-                            </div>
-                            <div class="flex justify-between">
-                                <div class="flex gap-2"><span class="w-3 h-3 bg-yellow-500 rounded-full"></span>En cours</div>
-                                <span class="font-medium">{{ $maintenances->where('status','en cours')->count() }}</span>
-                            </div>
-                            <div class="flex justify-between">
-                                <div class="flex gap-2"><span class="w-3 h-3 bg-red-500 rounded-full"></span>En attente</div>
-                                <span class="font-medium">{{ $maintenances->where('status','en attente')->count() }}</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+    <h3 class="font-semibold mb-4">Réparation par statut</h3>
+    <div class="h-48 mb-4"><canvas id="donutChart"></canvas></div>
+    <div class="space-y-3 text-sm">
+        <div class="flex justify-between items-center">
+            <div class="flex gap-2 items-center">
+                <span class="w-3 h-3 bg-green-500 rounded-full"></span>
+                <span>Terminées</span>
+            </div>
+            <div class="text-right">
+                <span class="font-bold">{{ $terminees }}</span>
+                <span class="text-gray-500 text-xs ml-1">
+                    ({{ $totalMaintenances > 0 ? round(($terminees/$totalMaintenances)*100) : 0 }}%)
+                </span>
+            </div>
+        </div>
+        <div class="flex justify-between items-center">
+            <div class="flex gap-2 items-center">
+                <span class="w-3 h-3 bg-yellow-500 rounded-full"></span>
+                <span>En cours</span>
+            </div>
+            <div class="text-right">
+                <span class="font-bold">{{ $encours }}</span>
+                <span class="text-gray-500 text-xs ml-1">
+                    ({{ $totalMaintenances > 0 ? round(($encours/$totalMaintenances)*100) : 0 }}%)
+                </span>
+            </div>
+        </div>
+        <div class="flex justify-between items-center">
+            <div class="flex gap-2 items-center">
+                <span class="w-3 h-3 bg-red-500 rounded-full"></span>
+                <span>En attente</span>
+            </div>
+            <div class="text-right">
+                <span class="font-bold">{{ $attente }}</span>
+                <span class="text-gray-500 text-xs ml-1">
+                    ({{ $totalMaintenances > 0 ? round(($attente/$totalMaintenances)*100) : 0 }}%)
+                </span>
+            </div>
+        </div>
+    </div>
+</div>
 
                 <!-- TABLE -->
                 <!--<div class="mt-32 bg-white dark:bg-gray-800 rounded-xl shadow-sm border-gray-200 dark:border-gray-700 overflow-hidden">                    <div class="p-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
@@ -318,6 +344,8 @@
         </main>
     </div>
 </div>
+
+
 
 <script>
 lucide.createIcons();

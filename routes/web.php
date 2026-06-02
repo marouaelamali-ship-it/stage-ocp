@@ -42,30 +42,32 @@ Route::post('/signout', function (Request $request) {
 Route::middleware('auth')->group(function () {
 
     Route::get('/dashboard', function () {
-        $maintenances = Maintenance::with('equipment')->latest()->paginate(5);
-        $totalMaintenances = Maintenance::count();
-        $termines = Maintenance::where('status', 'termine')->count();
-        $encours = Maintenance::where('status', 'en cours')->count();
-        $attente = Maintenance::where('status', 'en attente')->count();
-        $equipments = Equipment::count();
-        $users = \App\Models\User::count();
+    $maintenances = Maintenance::with('equipment')->latest()->paginate(5);
+    $totalMaintenances = Maintenance::count();
+    
+    // 7ell: sta3mel $terminees machi $termines bach tmatchi m3a blade
+    $terminees = Maintenance::where('status', 'termine')->count(); // bla accent s7i7
+    $encours = Maintenance::where('status', 'en cours')->count();
+    $attente = Maintenance::where('status', 'en attente')->count();
+    
+    $equipments = Equipment::count();
+    $users = \App\Models\User::count();
 
-        $monthlyMaintenances = [];
-        for ($month = 1; $month <= 12; $month++) {
-            $monthlyMaintenances[] = Maintenance::whereMonth('created_at', $month)->count();
-        }
+    $monthlyMaintenances = [];
+    for ($month = 1; $month <= 12; $month++) {
+        $monthlyMaintenances[] = Maintenance::whereMonth('created_at', $month)->count();
+    }
 
-        $topEquipments = Equipment::withCount('maintenances')
-            ->orderByDesc('maintenances_count')
-            ->take(5)
-            ->get();
+    $topEquipments = Equipment::withCount('maintenances')
+        ->orderByDesc('maintenances_count')
+        ->take(5)
+        ->get();
 
-        return view('dashboard', compact(
-            'maintenances','totalMaintenances','termines','encours','attente',
-            'equipments','users','monthlyMaintenances','topEquipments'
-        ));
+    return view('dashboard', compact(
+        'maintenances','totalMaintenances','terminees','encours','attente', // bedel hna
+        'equipments','users','monthlyMaintenances','topEquipments'
+    ));
     });
-
     /*
     |--------------------------------------------------------------------------
     | EQUIPMENTS - 2 PAGES M9ADIN
