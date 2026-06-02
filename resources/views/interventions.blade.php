@@ -66,24 +66,18 @@
             </div>
 
             <div>
-                <label class="block text-sm font-medium text-slate-300 mb-2">Technicien</label>
-                <input type="text" name="technicien" placeholder="Nom du technicien"
-                    class="w-full bg-slate-800 border-slate-700 p-4 rounded-2xl text-white outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 transition" required>
+                <label class="block text-sm font-medium text-slate-300 mb-2">Date de début</label>
+                <input type="date" name="date_debut" class="w-full bg-slate-800 border-slate-700 p-4 rounded-2xl text-white outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 transition" required>
             </div>
 
             <div>
-                <label class="block text-sm font-medium text-slate-300 mb-2">Date d'intervention</label>
-                <input type="date" name="date_intervention"
-                    class="w-full bg-slate-800 border-slate-700 p-4 rounded-2xl text-white outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 transition" required>
+                <label class="block text-sm font-medium text-slate-300 mb-2">Date de fin</label>
+                <input type="date" name="date_fin" class="w-full bg-slate-800 border-slate-700 p-4 rounded-2xl text-white outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 transition" required>
             </div>
 
             <div>
-                <label class="block text-sm font-medium text-slate-300 mb-2">État</label>
-                <select name="etat" class="w-full bg-slate-800 border-slate-700 p-4 rounded-2xl text-white outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 transition" required>
-                    <option value="planifiee">Planifiée</option>
-                    <option value="en cours">En cours</option>
-                    <option value="terminee">Terminée</option>
-                </select>
+                <label class="block text-sm font-medium text-slate-300 mb-2">Rapport</label>
+                <textarea name="rapport" class="w-full bg-slate-800 border-slate-700 p-4 rounded-2xl text-white outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 transition" rows="4" required></textarea>  
             </div>
 
             <button class="bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-600 hover:to-blue-700 text-white rounded-2xl p-4 font-bold transition shadow-lg flex items-center justify-center gap-2 mt-4">
@@ -91,6 +85,11 @@
                 Ajouter Intervention
             </button>
         </form>
+
+        
+
+
+
     </div>
 
 </div>

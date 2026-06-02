@@ -51,7 +51,7 @@
             </a>
 
             <a href="/calendrier" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-300 hover:bg-slate-800 hover:text-white transition"><i data-lucide="calendar" class="w-5 h-5"></i><span class="text-sm font-medium">Calendrier</span></a>
-            <a href="/interventions" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-300 hover:bg-slate-800 hover:text-white transition"><i data-lucide="clipboard-list" class="w-5 h-5"></i><span class="text-sm font-medium">Interventions</span></a>
+            <a href="/listeint" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-300 hover:bg-slate-800 hover:text-white transition"><i data-lucide="clipboard-list" class="w-5 h-5"></i><span class="text-sm font-medium">Interventions</span></a>
             <a href="/rapport" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-300 hover:bg-slate-800 hover:text-white transition"><i data-lucide="file-text" class="w-5 h-5"></i><span class="text-sm font-medium">Rapports</span></a>
             <a href="/parametres" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-300 hover:bg-slate-800 hover:text-white transition"><i data-lucide="settings" class="w-5 h-5"></i><span class="text-sm font-medium">Paramètres</span></a>
         </nav>

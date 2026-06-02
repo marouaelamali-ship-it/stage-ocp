@@ -194,20 +194,103 @@ Route::middleware('auth')->group(function () {
         return view('calendrier', compact('maintenances'));
     });
 
+//interventions
     Route::get('/interventions', function () {
-        $interventions = \App\Models\Intervention::with('maintenance')->latest()->paginate(5);
-        $maintenances = Maintenance::all();
-        return view('interventions', compact('interventions', 'maintenances'));
+
+        $interventions = \App\Models\Intervention::latest()->get();
+
+        $maintenances = \App\Models\Maintenance::all();
+
+        return view('interventions', compact(
+            'interventions',
+            'maintenances'
+        ));
+    });
+
+    Route::get('/listeint', function () {
+        $interventions = \App\Models\Intervention::latest()->paginate(10);
+        return view('listeint', compact('interventions'));
     });
 
     Route::post('/interventions', function(Request $request){
         \App\Models\Intervention::create([
             'maintenance_id' => $request->maintenance_id,
-            'technicien' => $request->technicien,
-            'date_intervention' => $request->date_intervention,
-            'etat' => $request->etat
+            'date_debut' => $request->date_debut,
+            'date_fin' => $request->date_fin,
+            'rapport' => $request->rapport,
+
         ]);
         return back()->with('success', 'Intervention ajoutée');
     });
 
+//rapport
+Route::get('/rapport', function () {
+
+    $totalEquipments = \App\Models\Equipment::count();
+
+    $totalMaintenances = \App\Models\Maintenance::count();
+
+    $totalInterventions = \App\Models\Intervention::count();
+
+    $terminees = \App\Models\Maintenance::where('status','termine')->count();
+
+    $encours = \App\Models\Maintenance::where('status','en cours')->count();
+
+    $attente = \App\Models\Maintenance::where('status','en attente')->count();
+
+    return view('rapport', compact(
+        'totalEquipments',
+        'totalMaintenances',
+        'totalInterventions',
+        'terminees',
+        'encours',
+        'attente'
+    ));
 });
+
+//parametre
+Route::get('/parametres', function () {
+    return view('parametres');
+});
+
+
+//pdf rapport
+Route::get('/export-pdf', function () {
+
+    $equipments = \App\Models\Equipment::all();
+
+    $maintenances = \App\Models\Maintenance::with('equipment')->get();
+
+    $interventions = \App\Models\Intervention::all();
+
+    $totalEquipments = \App\Models\Equipment::count();
+
+    $totalMaintenances = \App\Models\Maintenance::count();
+
+    $totalInterventions = \App\Models\Intervention::count();
+
+    $terminees = \App\Models\Maintenance::where('status','termine')->count();
+
+    $encours = \App\Models\Maintenance::where('status','en cours')->count();
+
+    $attente = \App\Models\Maintenance::where('status','en attente')->count();
+
+    $pdf = Pdf::loadView('pdf.rapport', compact(
+        'equipments',
+        'maintenances',
+        'interventions',
+        'totalEquipments',
+        'totalMaintenances',
+        'totalInterventions',
+        'terminees',
+        'encours',
+        'attente'
+    ));
+
+    return $pdf->download('Rapport_OCP.pdf');
+});
+
+
+
+});
+

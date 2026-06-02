@@ -8,11 +8,11 @@ class Intervention extends Model
 {
     protected $fillable = [
         'maintenance_id',
-        'technicien',
-        'date_intervention',
-        'etat'
+        'date_debut',
+        'date_fin',
+        'rapport'
     ];
-
+    
     public function maintenance()
     {
         return $this->belongsTo(Maintenance::class);
